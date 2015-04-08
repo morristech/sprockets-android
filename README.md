@@ -1,7 +1,7 @@
 Sprockets for Android [![Maven Central][5]][6] [![Android Arsenal][3]][4]
 =========================================================================
 
-Extend base components, use widgets, and call utility methods.
+Extend base components, use widgets, and call utility methods.  Includes [Sprockets for Java][7].
 
 * [Features](#features)
 * [Install](#install)
@@ -100,6 +100,7 @@ Many features will work with lower API levels, though you should carefully test 
 [4]: https://android-arsenal.com/details/1/1243
 [5]: https://img.shields.io/maven-central/v/net.sf.sprockets/sprockets-android.svg
 [6]: https://search.maven.org/#search|ga|1|g%3Anet.sf.sprockets%20a%3Asprockets-android
+[7]: https://github.com/pushbit/sprockets
 
 [10]: https://raw.githubusercontent.com/pushbit/sprockets-android/master/sprockets/proguard-sprockets.pro
 [11]: https://raw.githubusercontent.com/pushbit/sprockets/master/src/main/resources/net/sf/sprockets/sprockets.xml
