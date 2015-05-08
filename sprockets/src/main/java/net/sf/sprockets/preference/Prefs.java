@@ -1,16 +1,16 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,12 +20,12 @@ package net.sf.sprockets.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.preference.PreferenceManager;
 
 import net.sf.sprockets.app.ui.BaseNavigationDrawerFragment;
 
 import java.util.Set;
 
+import static android.content.Context.MODE_MULTI_PROCESS;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -38,13 +38,23 @@ public class Prefs {
     public static final String SPROCKETS = "net.sf.sprockets_preferences";
     public static final String APP_VERSION_CODE = "app_version_code";
     public static final String APP_VERSION_NAME = "app_version_name";
+
     /**
-     * True if the {@link BaseNavigationDrawerFragment navigation drawer} 'Rate' option has been
-     * clicked.
+     * True if the {@link BaseNavigationDrawerFragment navigation drawer} 'Rate' option was clicked.
      */
     public static final String RATED = "rated";
 
     private Prefs() {
+    }
+
+    /**
+     * Get the name of the default SharedPreferences.
+     *
+     * @since 2.4.0
+     */
+    public static String getDefaultName(Context context) {
+        /* from PreferenceManager.getDefaultSharedPreferencesName */
+        return context.getPackageName() + "_preferences";
     }
 
     /**
@@ -58,8 +68,29 @@ public class Prefs {
      * Get the SharedPreferences.
      */
     public static SharedPreferences get(Context context, String name) {
-        return name == null ? PreferenceManager.getDefaultSharedPreferences(context)
-                : context.getSharedPreferences(name, MODE_PRIVATE);
+        return get(context, name, MODE_PRIVATE);
+    }
+
+    private static SharedPreferences get(Context context, String name, int mode) {
+        return context.getSharedPreferences(name == null ? getDefaultName(context) : name, mode);
+    }
+
+    /**
+     * Reload the default SharedPreferences.
+     *
+     * @since 2.4.0
+     */
+    public static SharedPreferences reload(Context context) {
+        return reload(context, null);
+    }
+
+    /**
+     * Reload the SharedPreferences.
+     *
+     * @since 2.4.0
+     */
+    public static SharedPreferences reload(Context context, String name) {
+        return get(context, name, MODE_MULTI_PROCESS);
     }
 
     /**
@@ -335,32 +366,38 @@ public class Prefs {
     }
 
     /**
-     * Get a set of values from the default SharedPreferences.
+     * Get a set of values from the default SharedPreferences. Do not modify the returned Set.
      *
      * @return null if the key does not exist
+     * @see SharedPreferences#getStringSet(String, Set)
      */
     public static Set<String> getStringSet(Context context, String key) {
         return getStringSet(context, key, (Set<String>) null);
     }
 
     /**
-     * Get a set of values from the default SharedPreferences.
+     * Get a set of values from the default SharedPreferences. Do not modify the returned Set.
+     *
+     * @see SharedPreferences#getStringSet(String, Set)
      */
     public static Set<String> getStringSet(Context context, String key, Set<String> defValue) {
         return getStringSet(context, null, key, defValue);
     }
 
     /**
-     * Get a set of values from the SharedPreferences.
+     * Get a set of values from the SharedPreferences. Do not modify the returned Set.
      *
      * @return null if the key does not exist
+     * @see SharedPreferences#getStringSet(String, Set)
      */
     public static Set<String> getStringSet(Context context, String name, String key) {
         return getStringSet(context, name, key, null);
     }
 
     /**
-     * Get a set of values from the SharedPreferences.
+     * Get a set of values from the SharedPreferences. Do not modify the returned Set.
+     *
+     * @see SharedPreferences#getStringSet(String, Set)
      */
     public static Set<String> getStringSet(Context context, String name, String key,
                                            Set<String> defValue) {
