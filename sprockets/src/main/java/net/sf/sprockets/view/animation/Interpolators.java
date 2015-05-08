@@ -17,6 +17,9 @@
 
 package net.sf.sprockets.view.animation;
 
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
@@ -46,7 +49,25 @@ public class Interpolators {
      * 1 cycle.
      */
     public static final CycleInterpolator CYCLE = new CycleInterpolator(1.0f);
+
+    /**
+     * @since 2.4.0
+     */
+    public static final FastOutLinearInInterpolator FAST_OUT_LINEAR_IN =
+            new FastOutLinearInInterpolator();
+
+    /**
+     * @since 2.4.0
+     */
+    public static final FastOutSlowInInterpolator FAST_OUT_SLOW_IN =
+            new FastOutSlowInInterpolator();
     public static final LinearInterpolator LINEAR = new LinearInterpolator();
+
+    /**
+     * @since 2.4.0
+     */
+    public static final LinearOutSlowInInterpolator LINEAR_OUT_SLOW_IN =
+            new LinearOutSlowInInterpolator();
 
     private Interpolators() {
     }
