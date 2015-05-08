@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds.Builder;
 
 import net.sf.sprockets.R;
-import net.sf.sprockets.location.Locations;
+import net.sf.sprockets.gms.location.Locations;
 
 /**
  * Utility methods for working with GoogleMaps.

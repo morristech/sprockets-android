@@ -1,16 +1,16 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,6 +28,12 @@ import android.content.res.Resources;
  */
 public class SprocketsApplication extends Application {
     private static Context mContext;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mContext = getApplicationContext();
+    }
 
     /**
      * Get the application context.
@@ -54,11 +60,5 @@ public class SprocketsApplication extends Application {
      */
     public static ContentResolver cr() {
         return mContext != null ? mContext.getContentResolver() : null;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mContext = getApplicationContext();
     }
 }

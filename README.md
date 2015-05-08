@@ -63,7 +63,7 @@ Install
 1\. Add the dependency.
 
 ```groovy
-    compile 'net.sf.sprockets:sprockets-android:2.3.0'
+    compile 'net.sf.sprockets:sprockets-android:2.4.0'
 ```
 
 2\. Ensure the `buildTypes` have `minifyEnabled true`, download [proguard-sprockets.pro][10], and add it to `proguardFiles`.
@@ -78,7 +78,7 @@ Install
     }
 ```
 
-4\. (Optional) Download [sprockets.xml][11] to `src/main/resources/`. If you will use Google APIs, add your [Google API key][12].
+4\. (Optional) Download [sprockets.xml][11] to `src/main/resources/`. If you will use Google APIs, add your [Google API key][12] to it.
 
 Notes
 -----

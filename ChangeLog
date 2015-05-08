@@ -1,3 +1,17 @@
+2015-05-08  2.4.0
+
+	* added app.ContentService
+	* added content.Content.{GROUP_BY,HAVING}
+	* added net.Uris.{groupBy{,Having{,Limit}}
+	* added preference.Prefs.{getDefaultName,reload}
+	* added app.backup.DefaultSharedPreferencesBackupAgent
+	* added content.Managers.backup
+	* added gms.location.Geofences
+	* moved location.Locations to gms.location.Locations
+	* added gms.location.Locations.client
+	* added gms.common.api.Connector.client
+	* deprecated widget.GridCard
+
 2015-04-05  2.3.0
 
 	* added app.ui.SprocketsFragment.{save,get}LoaderArgs

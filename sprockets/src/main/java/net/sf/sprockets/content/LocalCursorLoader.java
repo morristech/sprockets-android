@@ -27,7 +27,7 @@ import com.google.android.gms.location.LocationRequest;
 
 import net.sf.sprockets.content.Content.Query;
 import net.sf.sprockets.database.EasyCursor;
-import net.sf.sprockets.location.Locations;
+import net.sf.sprockets.gms.location.Locations;
 
 import java.util.concurrent.CountDownLatch;
 

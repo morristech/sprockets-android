@@ -15,23 +15,23 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.sf.sprockets.location;
+package net.sf.sprockets.gms.location;
 
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.Builder;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import net.sf.sprockets.gms.common.api.Connector;
 
 import static com.google.android.gms.common.ConnectionResult.SUCCESS;
-import static com.google.android.gms.location.LocationServices.API;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 /**
@@ -42,10 +42,20 @@ public class Locations {
     }
 
     /**
+     * Get a connected client for {@link LocationServices}. Must not be called on the UI thread.
+     *
+     * @return null if connecting fails
+     * @since 2.4.0
+     */
+    public static GoogleApiClient client(Context context) {
+        return Connector.client(context, LocationServices.API);
+    }
+
+    /**
      * Get the best most recent location or, if none are available, the current coarse location and
      * send it to the listener.
      *
-     * @return {@link ConnectionResult#SUCCESS SUCCESS} if Google Play Services is available and an
+     * @return {@link ConnectionResult#SUCCESS SUCCESS} if Google Play services is available and an
      * attempt will be made to get the location and send it to the listener
      */
     public static int requestLast(Context context, LocationListener listener) {
@@ -55,7 +65,7 @@ public class Locations {
     /**
      * Get the current coarse location and send it to the listener.
      *
-     * @return {@link ConnectionResult#SUCCESS SUCCESS} if Google Play Services is available and an
+     * @return {@link ConnectionResult#SUCCESS SUCCESS} if Google Play services is available and an
      * attempt will be made to get the location and send it to the listener
      */
     public static int requestCurrent(Context context, LocationListener listener) {
@@ -66,11 +76,11 @@ public class Locations {
      * Get the current location with the priority and send it to the listener.
      *
      * @param priority must be one of the {@link LocationRequest} PRIORITY constants
-     * @return {@link ConnectionResult#SUCCESS SUCCESS} if Google Play Services is available and an
+     * @return {@link ConnectionResult#SUCCESS SUCCESS} if Google Play services is available and an
      * attempt will be made to get the location and send it to the listener
      */
     public static int requestCurrent(Context context, int priority, LocationListener listener) {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         if (status == SUCCESS) {
             new Request(context, priority, listener);
         }
@@ -92,7 +102,8 @@ public class Locations {
         private Request(Context context, int priority, LocationListener listener) {
             mPriority = priority;
             mListener = listener;
-            mClient = new Builder(context.getApplicationContext(), this, this).addApi(API).build();
+            mClient = new Builder(context.getApplicationContext(), this, this)
+                    .addApi(LocationServices.API).build();
             mClient.connect();
         }
 

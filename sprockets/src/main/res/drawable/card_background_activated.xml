@@ -9,6 +9,6 @@
         android:right="@dimen/card_padding"
         android:top="@dimen/card_padding"/>
 
-    <solid android:color="@color/list_activated"/>
+    <solid android:color="@color/card_activated"/>
 
 </shape>
