@@ -18,6 +18,7 @@
 package net.sf.sprockets.app.ui;
 
 import android.app.Activity;
+import android.app.backup.BackupManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.TypedArray;
@@ -38,6 +39,7 @@ import android.view.View;
 
 import net.sf.sprockets.R;
 import net.sf.sprockets.app.Fragments;
+import net.sf.sprockets.content.Managers;
 import net.sf.sprockets.util.Elements;
 
 import org.apache.commons.collections.primitives.ArrayIntList;
@@ -50,7 +52,8 @@ import java.util.Set;
  * Sets preference values as their summary for {@link RingtonePreference},
  * {@link MultiSelectListPreference}, {@link EditTextPreference}, and {@link Preference}. This can
  * already be accomplished for {@link ListPreference} by including {@code %s} in its
- * {@link ListPreference#setSummary(CharSequence) summary}.
+ * {@link ListPreference#setSummary(CharSequence) summary}. Also
+ * {@link BackupManager#dataChanged() requests a backup} when a preference value changes.
  * <p>
  * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/settings.xml" target="_blank">Sample Usage</a>
  * </p>
@@ -98,12 +101,9 @@ public class SprocketsPreferenceFragment extends PreferenceFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SprocketsFragment.onCreate(this, savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            int prefs = args.getInt(PREFS);
-            if (prefs > 0) {
-                addPreferencesFromResource(prefs);
-            }
+        int prefs = Fragments.arguments(this).getInt(PREFS);
+        if (prefs > 0) {
+            addPreferencesFromResource(prefs);
         }
     }
 
@@ -176,6 +176,7 @@ public class SprocketsPreferenceFragment extends PreferenceFragment
         if (pref != null) {
             setSummary(pref);
         }
+        Managers.backup(a).dataChanged();
     }
 
     @Override
