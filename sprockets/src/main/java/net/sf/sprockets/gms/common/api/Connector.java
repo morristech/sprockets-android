@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -17,26 +17,55 @@
 
 package net.sf.sprockets.gms.common.api;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.Api.ApiOptions.NotRequiredOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.Builder;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 
 /**
- * Connects to Google Play Services and logs any failures.
+ * Connects to Google Play services and logs any failures.
  */
 public abstract class Connector implements ConnectionCallbacks, OnConnectionFailedListener {
     private static final String TAG = Connector.class.getSimpleName();
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        Log.e(TAG, "couldn't connect to Google Play Services: "
-                + GooglePlayServicesUtil.getErrorString(result.getErrorCode()));
+        connectionFailed(result);
     }
 
     @Override
     public void onConnectionSuspended(int cause) {
+    }
+
+    /**
+     * Get a connected client for the API. Must not be called on the UI thread.
+     *
+     * @return null if connecting fails
+     * @since 2.4.0
+     */
+    public static GoogleApiClient client(Context context, Api<? extends NotRequiredOptions> api) {
+        GoogleApiClient client = new Builder(context.getApplicationContext()).addApi(api).build();
+        ConnectionResult result = client.blockingConnect();
+        if (result.isSuccess()) {
+            return client;
+        }
+        connectionFailed(result);
+        return null;
+
+    }
+
+    /**
+     * Log the failure.
+     */
+    private static void connectionFailed(ConnectionResult result) {
+        Log.e(TAG, "couldn't connect to Google Play services: "
+                + GoogleApiAvailability.getInstance().getErrorString(result.getErrorCode()));
     }
 }
