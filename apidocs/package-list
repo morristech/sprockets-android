@@ -1,5 +1,6 @@
 net.sf.sprockets
 net.sf.sprockets.app
+net.sf.sprockets.app.backup
 net.sf.sprockets.app.ui
 net.sf.sprockets.content
 net.sf.sprockets.content.res
@@ -8,13 +9,13 @@ net.sf.sprockets.database.sqlite
 net.sf.sprockets.gms.analytics
 net.sf.sprockets.gms.common.api
 net.sf.sprockets.gms.gcm
+net.sf.sprockets.gms.location
 net.sf.sprockets.gms.maps
 net.sf.sprockets.google
 net.sf.sprockets.graphics
 net.sf.sprockets.graphics.drawable
 net.sf.sprockets.io
 net.sf.sprockets.lang
-net.sf.sprockets.location
 net.sf.sprockets.naming
 net.sf.sprockets.net
 net.sf.sprockets.picasso
