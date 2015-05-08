@@ -17,8 +17,8 @@
 
 package net.sf.sprockets.graphics;
 
-import android.graphics.Bitmap;
 import android.support.v7.graphics.Palette;
+import android.support.v7.graphics.Palette.Builder;
 import android.support.v7.graphics.Palette.Swatch;
 
 /**
@@ -28,10 +28,10 @@ import android.support.v7.graphics.Palette.Swatch;
  */
 public class Palettes {
     /**
-     * Maximum number of colors to use when {@link Palette#generate(Bitmap, int) generating} a
+     * Maximum number of colors to use when {@link Builder#maximumColorCount(int) generating} a
      * Palette.
      */
-    public static final int MAX_COLORS = 32;
+    public static final int MAX_COLORS = 24;
 
     private Palettes() {
     }
