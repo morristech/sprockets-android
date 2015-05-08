@@ -39,6 +39,20 @@ import static android.content.ContentResolver.SYNC_EXTRAS_MANUAL;
  */
 public class Content {
     /**
+     * URI query parameter for the column(s) to group the rows by.
+     *
+     * @since 2.4.0
+     */
+    public static final String GROUP_BY = "group_by";
+
+    /**
+     * URI query parameter for the filter to apply after grouping the rows.
+     *
+     * @since 2.4.0
+     */
+    public static final String HAVING = "having";
+
+    /**
      * URI query parameter for requesting a limited number of rows returned by the query.
      */
     public static final String LIMIT = "limit_offset";

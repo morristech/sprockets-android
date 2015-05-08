@@ -37,6 +37,8 @@ import net.sf.sprockets.database.sqlite.DbOpenHelper;
 import java.util.Arrays;
 
 import static net.sf.sprockets.content.Content.CALLER_IS_SYNCADAPTER;
+import static net.sf.sprockets.content.Content.GROUP_BY;
+import static net.sf.sprockets.content.Content.HAVING;
 import static net.sf.sprockets.content.Content.LIMIT;
 import static net.sf.sprockets.content.Content.NOTIFY_CHANGE;
 import static net.sf.sprockets.database.Operation.DELETE;
@@ -180,7 +182,15 @@ public abstract class DbContentProvider extends ContentProvider {
             if (args != null) {
                 sql.mArgs = DatabaseUtils.appendSelectionArgs(sql.mArgs, args);
             }
-            if (order != null) { // prefer caller's value
+            String groupBy = uri.getQueryParameter(GROUP_BY);
+            if (groupBy != null) { // prefer caller's value
+                sql.mGroupBy = groupBy;
+            }
+            String having = uri.getQueryParameter(HAVING);
+            if (having != null) {
+                sql.mHaving = having;
+            }
+            if (order != null) {
                 sql.mOrderBy = order;
             }
             String limit = uri.getQueryParameter(LIMIT);
