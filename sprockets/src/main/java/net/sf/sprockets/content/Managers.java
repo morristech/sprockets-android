@@ -1,16 +1,16 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,6 +26,7 @@ import android.app.NotificationManager;
 import android.app.SearchManager;
 import android.app.UiModeManager;
 import android.app.admin.DevicePolicyManager;
+import android.app.backup.BackupManager;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.hardware.SensorManager;
@@ -83,9 +84,12 @@ import static android.content.Context.WIFI_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
 
 /**
- * Utility methods for working with {@link Context#getSystemService(String) system services}.
+ * Utility methods for working with {@link Context#getSystemService(String) system services} and
+ * other Managers.
  */
 public class Managers {
+    private static BackupManager sBackup;
+
     private Managers() {
     }
 
@@ -107,6 +111,16 @@ public class Managers {
 
     public static AudioManager audio(Context context) {
         return (AudioManager) context.getSystemService(AUDIO_SERVICE);
+    }
+
+    /**
+     * @since 2.4.0
+     */
+    public static BackupManager backup(Context context) {
+        if (sBackup == null) {
+            sBackup = new BackupManager(context.getApplicationContext());
+        }
+        return sBackup;
     }
 
     public static ClipboardManager clipboard(Context context) {
