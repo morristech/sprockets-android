@@ -63,6 +63,17 @@ public class GradientTransformation implements Transformation {
     }
 
     /**
+     * Use the color and default positions. The first half of the overlay will be the color. The
+     * second half will fade from the color to transparent.
+     *
+     * @since 2.4.0
+     */
+    public GradientTransformation(Context context, Orientation orientation, int colorResId) {
+        this(orientation, new int[]{context.getResources().getColor(colorResId), TRANSPARENT},
+                sDefPositions);
+    }
+
+    /**
      * Apply a gradient of the colors at the positions in the direction of the orientation.
      *
      * @see LinearGradient#LinearGradient(float, float, float, float, int[], float[],
