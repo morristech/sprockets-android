@@ -1,16 +1,16 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,6 +25,7 @@ import android.os.Bundle;
 
 import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
 import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+import static android.os.Bundle.EMPTY;
 
 /**
  * Utility methods for working with Fragments.
@@ -34,15 +35,19 @@ public class Fragments {
     }
 
     /**
-     * Get the arguments for the Fragment, instantiating them if necessary. As with
-     * {@link Fragment#setArguments(Bundle) setArguments}, this can only be called before the
-     * Fragment has been attached to its Activity.
+     * Get the arguments for the Fragment. If the Fragment doesn't have arguments and it isn't
+     * attached to an Activity, a new Bundle will be set as its arguments. Otherwise an empty (and
+     * immutable) Bundle will be returned.
      */
     public static Bundle arguments(Fragment frag) {
         Bundle args = frag.getArguments();
         if (args == null) {
-            args = new Bundle();
-            frag.setArguments(args);
+            if (frag.getActivity() == null) {
+                args = new Bundle();
+                frag.setArguments(args);
+            } else {
+                args = EMPTY;
+            }
         }
         return args;
     }
