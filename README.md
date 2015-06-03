@@ -111,7 +111,7 @@ Many features will work with lower API levels, though you should carefully test 
 
 [300]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/database/sqlite/DbOpenHelper.html
 
-[400]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/location/Locations.html
+[400]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/gms/location/Locations.html
 
 [500]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/preference/Prefs.html
 
