@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
  * 
  * This file is part of Sprockets.
  * 
@@ -45,6 +45,29 @@ public class Cursors {
     }
 
     /**
+     * Get the int value in the first row and column and then close the cursor.
+     *
+     * @return {@link Integer#MIN_VALUE} if the cursor is empty
+     * @since 2.5.0
+     */
+    public static int firstInt(Cursor cursor) {
+        return firstInt(cursor, true);
+    }
+
+    /**
+     * Get the int value in the first row and column.
+     *
+     * @param close true to close the cursor or false to leave it open
+     * @return {@link Integer#MIN_VALUE} if the cursor is empty
+     * @since 2.5.0
+     */
+    public static int firstInt(Cursor cursor, boolean close) {
+        int i = cursor.moveToFirst() ? cursor.getInt(0) : Integer.MIN_VALUE;
+        close(cursor, close);
+        return i;
+    }
+
+    /**
      * Get the long value in the first row and column and then close the cursor.
      *
      * @return {@link Long#MIN_VALUE} if the cursor is empty
@@ -84,6 +107,35 @@ public class Cursors {
         String s = cursor.moveToFirst() ? cursor.getString(0) : null;
         close(cursor, close);
         return s;
+    }
+
+    /**
+     * Get all int values in the first column and then close the cursor.
+     *
+     * @return null if the cursor is empty
+     * @since 2.5.0
+     */
+    public static int[] allInts(Cursor cursor) {
+        return allInts(cursor, true);
+    }
+
+    /**
+     * Get all int values in the first column.
+     *
+     * @param close true to close the cursor or false to leave it open
+     * @return null if the cursor is empty
+     * @since 2.5.0
+     */
+    public static int[] allInts(Cursor cursor, boolean close) {
+        int[] i = null;
+        if (cursor.moveToFirst()) {
+            i = new int[cursor.getCount()];
+            do {
+                i[cursor.getPosition()] = cursor.getInt(0);
+            } while (cursor.moveToNext());
+        }
+        close(cursor, close);
+        return i;
     }
 
     /**
