@@ -17,16 +17,34 @@
 
 package net.sf.sprockets.database;
 
+import android.content.Context;
 import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.database.CursorWrapper;
+
+import net.sf.sprockets.content.Content.Query;
 
 /**
  * Cursor with additional methods that can simplify interaction.
  */
 public class EasyCursor extends CursorWrapper {
+    private Object mTag;
+
+    /**
+     * Wrap the cursor.
+     */
     public EasyCursor(Cursor cursor) {
         super(cursor);
+    }
+
+    /**
+     * Create a cursor for the query.
+     *
+     * @since 2.5.0
+     */
+    public EasyCursor(Context context, Query query) {
+        super(context.getContentResolver()
+                .query(query.uri, query.proj, query.sel, query.args, query.order));
     }
 
     /**
@@ -119,5 +137,24 @@ public class EasyCursor extends CursorWrapper {
      */
     public boolean isNull(String columnName) {
         return isNull(getColumnIndexOrThrow(columnName));
+    }
+
+    /**
+     * Store related data.
+     *
+     * @since 2.5.0
+     */
+    public EasyCursor setTag(Object tag) {
+        mTag = tag;
+        return this;
+    }
+
+    /**
+     * Related data that was previously {@link #setTag(Object) stored}.
+     *
+     * @since 2.5.0
+     */
+    public <T> T getTag() {
+        return (T) mTag;
     }
 }
