@@ -13,45 +13,40 @@ Features
 
 Below is a sample of the available classes. See the [Javadoc][1] for the complete reference.
 
-* app
-    * [VersionedApplication][100]
-        * Implement onVersionChanged to be notified when the app runs with a new version for the first time.
-    * [NavigationDrawerActivity][101]
-        * Manages the ActionBar during navigation drawer events.
-    * [BaseNavigationDrawerFragment][102] ([screenshot][105])
-        * Set items from an array, highlight selected item, and respond to clicks.
-    * [PanesActivity][103]
-        * Manages two fragment panes that are either displayed next to each other or in a ViewPager, depending on screen size.
-    * [SprocketsPreferenceFragment][104]
-        * Sets preference values as their summary.
-* content
-    * [DbContentProvider][200]
-        * ContentProvider with a SQLite database back end that implements all common database operations and notifies observers of changes.
-    * [GooglePlacesLoader][201]
-        * Loader that sends requests to the Google Places API and provides the responses.
-    * [LocalCursorLoader][202]
-        * Provides the current location to implementations before performing the cursor query.
-* database.sqlite
-    * [DbOpenHelper][300]
-        * Executes raw resource SQL scripts to create and upgrade the database.
-* location
-    * [Locations][400]
-        * Get the current location in one method call.
-* preference
-    * [Prefs][500]
-        * Get and set SharedPreferences values in one method call.
-* view
-    * [TranslateImagePageChangeListener][700] ([demo][701])
-        * Translates a "cropped" image when a ViewPager is scrolled to reveal the whole image.
-* widget
-    * [GooglePlaceAutoComplete][600] ([demo][604])
-        * AutoCompleteTextView that provides local suggestions from the Google Places API.
-    * [FadingActionBarScrollListener][601] ([demo][605])
-        * Fades the ActionBar title and background from transparent to opaque while scrolling down the list.
-    * [FloatingHeaderScrollListener][602] ([demo][606])
-        * Slides a View that floats above your list header(s) up and down along with the scrolling of the list.
-    * [ParallaxViewScrollListener][603] ([demo][607])
-        * Synchronises the scrolling of a View with a ListView, at a speed relative to the list scrolling speed.
+app |     |
+:-- | --- |
+[VersionedApplication][100] | Implement onVersionChanged to be notified when the app runs with a new version for the first time.
+[PanesActivity][103] | Manages two fragment panes that are either displayed next to each other or in a ViewPager, depending on screen size.
+[SprocketsPreferenceFragment][104] | Sets preference values as their summary.
+
+content |     |
+:------ | --- |
+[DbContentProvider][200] | ContentProvider with a SQLite database back end that implements all common database operations and notifies observers of changes.
+[GooglePlacesLoader][201] | Loader that sends requests to the Google Places API and provides the responses.
+[LocalCursorLoader][202] | Provides the current location to implementations before performing the cursor query.
+
+database.sqlite |     |
+:-------------- | --- |
+[DbOpenHelper][300] | Executes raw resource SQL scripts to create and upgrade the database.
+
+location |     |
+:------- | --- |
+[Locations][400] | Get the current location in one method call.
+
+preference |     |
+:--------- | --- |
+[Prefs][500] | Get and set SharedPreferences values in one method call.
+
+view |     |
+:--- | --- |
+[TranslateImagePageChangeListener][700] | Translates a "cropped" image when a ViewPager is scrolled to reveal the whole image. ([demo][701])
+
+widget |     |
+:----- | --- |
+[GooglePlaceAutoComplete][600] | AutoCompleteTextView that provides local suggestions from the Google Places API. ([demo][604])
+[FadingActionBarScrollListener][601] | Fades the ActionBar title and background from transparent to opaque while scrolling down the list. ([demo][605])
+[FloatingHeaderScrollListener][602] | Slides a View that floats above your list header(s) up and down along with the scrolling of the list. ([demo][606])
+[ParallaxViewScrollListener][603] | Synchronises the scrolling of a View with a ListView, at a speed relative to the list scrolling speed. ([demo][607])
 
 Install
 -------
@@ -63,7 +58,7 @@ Install
 1\. Add the dependency.
 
 ```groovy
-    compile 'net.sf.sprockets:sprockets-android:2.4.0'
+    compile 'net.sf.sprockets:sprockets-android:2.5.0'
 ```
 
 2\. Ensure the `buildTypes` have `minifyEnabled true`, download [proguard-sprockets.pro][10], and add it to `proguardFiles`.
@@ -78,7 +73,7 @@ Install
     }
 ```
 
-4\. (Optional) Download [sprockets.xml][11] to `src/main/resources/`. If you will use Google APIs, add your [Google API key][12] to it.
+4\. (Optional) Download [sprockets.xml][11] to `src/main/resources/` and add your [Google API key][12] to it.
 
 Notes
 -----
@@ -107,11 +102,8 @@ Many features will work with lower API levels, though you should carefully test 
 [12]: https://console.developers.google.com/
 
 [100]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/app/VersionedApplication.html
-[101]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/app/ui/NavigationDrawerActivity.html
-[102]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/app/ui/BaseNavigationDrawerFragment.html
 [103]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/app/ui/PanesActivity.html
 [104]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/app/ui/SprocketsPreferenceFragment.html
-[105]: samples/images/BaseNavigationDrawerFragment.png
 
 [200]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/content/DbContentProvider.html
 [201]: https://pushbit.github.io/sprockets-android/apidocs/index.html?net/sf/sprockets/content/GooglePlacesLoader.html

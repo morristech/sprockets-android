@@ -1,3 +1,9 @@
+2015-06-03  2.5.0
+
+	* added database.Cursors.{firstInt,allInts}
+	* added database.EasyCursor.{EasyCursor(Context, Query),setTag,getTag}
+	* added content.EasyCursorLoader.tagWith
+
 2015-05-08  2.4.0
 
 	* added app.ContentService

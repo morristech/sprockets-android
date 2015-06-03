@@ -42,8 +42,7 @@ import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
  * for the adapter position may start off screen, but the ActionBar will only fade while it is on
  * screen.
  * <p>
- * <strong>Note:</strong> Currently only ListView is supported. Support for GridView may be added in
- * the future.
+ * <strong>Note:</strong> Currently only ListView is supported.
  * </p>
  * <p>
  * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/FadingActionBarActivity.java" target="_blank">Sample Usage</a>
