@@ -21,13 +21,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.google.common.base.Throwables;
+
 import net.sf.sprockets.content.Content.Query;
 import net.sf.sprockets.database.EasyCursor;
+
+import java.util.concurrent.Callable;
 
 /**
  * Wraps the loaded cursor in an {@link EasyCursor}.
  */
 public class EasyCursorLoader extends CursorWrapperLoader<EasyCursor> {
+    private static final String TAG = EasyCursorLoader.class.getSimpleName();
+    private Callable<?> mCall;
+
     public EasyCursorLoader(Context context) {
         super(context);
     }
@@ -41,8 +48,27 @@ public class EasyCursorLoader extends CursorWrapperLoader<EasyCursor> {
         super(context, uri, projection, selection, selectionArgs, sortOrder);
     }
 
+    /**
+     * {@link EasyCursor#setTag(Object) Tag} the loaded Cursor with the result of the call, which is
+     * also executed on a background thread.
+     *
+     * @since 2.5.0
+     */
+    public EasyCursorLoader tagWith(Callable<?> call) {
+        mCall = call;
+        return this;
+    }
+
     @Override
     protected EasyCursor wrap(Cursor cursor) {
-        return new EasyCursor(cursor);
+        EasyCursor c = new EasyCursor(cursor);
+        if (mCall != null) {
+            try {
+                c.setTag(mCall.call());
+            } catch (Exception e) {
+                Throwables.propagate(e);
+            }
+        }
+        return c;
     }
 }
