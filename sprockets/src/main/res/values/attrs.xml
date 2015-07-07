@@ -2,13 +2,20 @@
 <resources>
 
     <declare-styleable name="Theme">
+
         <!-- Highlight matched substrings with this color. -->
         <attr name="matchedSubstringColor" format="color"/>
+
     </declare-styleable>
 
     <declare-styleable name="SprocketsPreferenceFragment">
-        <!-- XML resource with the preferences to display. -->
+
+        <!-- Display the preferences from this XML resource. -->
         <attr name="preferences" format="reference"/>
+
+        <!-- Send changes to analytics. Trackers.use must have already been called. -->
+        <attr name="trackChanges" format="boolean"/>
+
     </declare-styleable>
 
     <declare-styleable name="GooglePlaceAutoComplete">
@@ -33,7 +40,7 @@
         <!-- Return this many results, at most. Default and maximum is 5. -->
         <attr name="maxResults" format="integer" max="5" min="1"/>
 
-        <!-- Layout resource with a TextView to use for each suggestion. Default layout is
+        <!-- Use this TextView layout resource for each suggestion. Default layout is
              {@code android.R.layout.simple_spinner_dropdown_item}. -->
         <attr name="suggestionLayout" format="reference"/>
 
