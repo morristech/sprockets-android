@@ -20,7 +20,7 @@ package net.sf.sprockets.widget;
 import android.Manifest.permission;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -46,22 +46,23 @@ import net.sf.sprockets.google.Places.Params;
 import net.sf.sprockets.google.Places.Response;
 import net.sf.sprockets.google.Places.Response.Status;
 import net.sf.sprockets.lang.Substring;
+import net.sf.sprockets.text.style.Spans;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static net.sf.sprockets.google.Places.Response.Status.OK;
 import static net.sf.sprockets.google.Places.Response.Status.ZERO_RESULTS;
-import static net.sf.sprockets.text.style.Spans.BOLD;
 
 /**
  * AutoCompleteTextView that provides local suggestions from the
  * <a href="https://developers.google.com/places/" target="_blank">Google Places API</a>.
  * <p>
  * Requires {@link permission#ACCESS_COARSE_LOCATION ACCESS_COARSE_LOCATION} (or
- * {@link permission#ACCESS_FINE_LOCATION FINE}) and
- * {@link permission#INTERNET INTERNET} permissions.
+ * {@link permission#ACCESS_FINE_LOCATION FINE}) and {@link permission#INTERNET INTERNET}
+ * permissions.
  * </p>
  * <p>
  * XML Attributes: {@link #setRadius(int) radius}, {@link #setTypes(String) types},
@@ -70,24 +71,15 @@ import static net.sf.sprockets.text.style.Spans.BOLD;
  * {@link #setMatchedSubstringColor(int) matchedSubstringColor}
  * </p>
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/google_place_auto_complete.xml" target="_blank">Sample Layout</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/google_place_auto_complete.xml"
+ * target="_blank">Sample Layout</a>
  * </p>
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/GooglePlaceAutoCompleteActivity.java" target="_blank">Sample Usage</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/GooglePlaceAutoCompleteActivity.java"
+ * target="_blank">Sample Usage</a>
  * </p>
- *
- * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_radius
- * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_types
- * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_countries
- * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_language
- * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_maxResults
- * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_suggestionLayout
- * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_matchedSubstringColor
  */
 public class GooglePlaceAutoComplete extends AutoCompleteTextView {
-    /**
-     * Used by the Filter to get results.
-     */
     private final Params mParams;
     private int mRadius;
     private String mTypes;
@@ -97,7 +89,7 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
     private int mMaxResults;
     private int mLayout;
     private int mColor;
-    private ForegroundColorSpan mColorSpan;
+    private List<ForegroundColorSpan> mColorSpans;
     private OnPlaceClickListener mListener;
 
     public GooglePlaceAutoComplete(Context context) {
@@ -139,8 +131,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Prefer places within this many metres from the current location.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_radius
      */
     public GooglePlaceAutoComplete setRadius(int radius) {
         mRadius = radius;
@@ -150,8 +140,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Get the number of metres within which places will be preferred.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_radius
      */
     public int getRadius() {
         return mRadius;
@@ -160,8 +148,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
     /**
      * Autocomplete places of this type. Must be one of "geocode", "address", "establishment",
      * "(regions)", or "(cities)".
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_types
      */
     public GooglePlaceAutoComplete setTypes(String types) {
         mTypes = types;
@@ -172,8 +158,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Get the type of places that will be autocompleted.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_types
      */
     public String getTypes() {
         return mTypes;
@@ -182,8 +166,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
     /**
      * Autocomplete places in this country. Must be a two character ISO 3166-1 Alpha-2 compatible
      * country code, e.g. "GB". Currently only one country value is supported.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_countries
      */
     public GooglePlaceAutoComplete setCountries(String countries) {
         mCountries = countries;
@@ -193,8 +175,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Get the country code in which places will be autocompleted.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_countries
      */
     public String getCountries() {
         return mCountries;
@@ -203,7 +183,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
     /**
      * Return results in this language, if possible. Must be one of the supported language codes.
      *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_language
      * @see <a href="https://developers.google.com/maps/faq#languagesupport"
      * target="_blank">Supported Languages</a>
      */
@@ -215,8 +194,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Get the language code that results will be returned in.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_language
      */
     public String getLanguage() {
         return mLanguage;
@@ -240,8 +217,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Return this many results, at most.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_maxResults
      */
     public GooglePlaceAutoComplete setMaxResults(int maxResults) {
         mMaxResults = maxResults;
@@ -251,8 +226,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Get the maximum number of results that will be returned.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_maxResults
      */
     public int getMaxResults() {
         return mMaxResults;
@@ -260,8 +233,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Use the layout resource with a TextView for each suggestion.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_suggestionLayout
      */
     public GooglePlaceAutoComplete setSuggestionLayout(int layout) {
         mLayout = layout;
@@ -270,8 +241,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
     /**
      * Get the layout resource that will be used for each suggestion.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_suggestionLayout
      */
     public int getSuggestionLayout() {
         return mLayout;
@@ -281,21 +250,33 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      * Highlight matched substrings with the color.
      *
      * @param color 0 for no color highlight
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_matchedSubstringColor
      */
     public GooglePlaceAutoComplete setMatchedSubstringColor(int color) {
         mColor = color;
-        mColorSpan = color != 0 ? new ForegroundColorSpan(color) : null;
+        mColorSpans = color != 0 ? new ArrayList<ForegroundColorSpan>() : null;
         return this;
     }
 
     /**
      * Get the color that will be used to highlight matched substrings.
-     *
-     * @attr ref net.sf.sprockets.R.styleable#GooglePlaceAutoComplete_matchedSubstringColor
      */
     public int getMatchedSubstringColor() {
         return mColor;
+    }
+
+    /**
+     * Get a cached color span.
+     *
+     * @param i starts at zero
+     */
+    private ForegroundColorSpan getColorSpan(int i) {
+        if (i < mColorSpans.size()) {
+            return mColorSpans.get(i);
+        } else {
+            ForegroundColorSpan span = new ForegroundColorSpan(mColor);
+            mColorSpans.add(span);
+            return span;
+        }
     }
 
     /**
@@ -357,17 +338,26 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TextView view = convertView != null ? (TextView) convertView
-                    : (TextView) LayoutInflater.from(getContext()).inflate(mLayout != 0 ? mLayout
-                    : android.R.layout.simple_spinner_dropdown_item, parent, false);
+            TextView view = (TextView) convertView;
+            if (view == null) {
+                view = (TextView) LayoutInflater.from(getContext()).inflate(mLayout != 0 ? mLayout
+                        : android.R.layout.simple_spinner_dropdown_item, parent, false);
+                view.setTag(new SpannableStringBuilder());
+            }
             Prediction pred = getItem(position);
-            SpannableString s = new SpannableString(pred.getName());
-            for (Substring sub : pred.getMatchedSubstrings()) { // highlight matching substrings
+            SpannableStringBuilder s = (SpannableStringBuilder) view.getTag();
+            s.clear();
+            s.append(pred.getName());
+            /* highlight matching substrings */
+            List<Substring> subs = pred.getMatchedSubstrings();
+            int size = subs.size();
+            for (int i = 0; i < size; i++) {
+                Substring sub = subs.get(i);
                 int start = sub.getOffset();
                 int end = start + sub.getLength();
-                s.setSpan(BOLD, start, end, SPAN_EXCLUSIVE_EXCLUSIVE);
-                if (mColorSpan != null) {
-                    s.setSpan(mColorSpan, start, end, SPAN_EXCLUSIVE_EXCLUSIVE);
+                s.setSpan(Spans.bold(i), start, end, SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (mColorSpans != null) {
+                    s.setSpan(getColorSpan(i), start, end, SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
             view.setText(s);
