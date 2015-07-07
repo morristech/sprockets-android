@@ -20,6 +20,9 @@ package net.sf.sprockets.text.style;
 import android.graphics.Typeface;
 import android.text.style.StyleSpan;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Instances of Spans.
  *
@@ -29,7 +32,28 @@ public class Spans {
     public static final StyleSpan BOLD = new StyleSpan(Typeface.BOLD);
     public static final StyleSpan ITALIC = new StyleSpan(Typeface.ITALIC);
     public static final StyleSpan BOLD_ITALIC = new StyleSpan(Typeface.BOLD_ITALIC);
+    private static List<StyleSpan> sBolds;
 
     private Spans() {
+    }
+
+    /**
+     * Get a cached bold span.
+     *
+     * @param i starts at zero
+     * @since 2.6.0
+     */
+    public static StyleSpan bold(int i) {
+        if (sBolds == null) {
+            sBolds = new ArrayList<>();
+            sBolds.add(BOLD);
+        }
+        if (i < sBolds.size()) {
+            return sBolds.get(i);
+        } else {
+            StyleSpan bold = new StyleSpan(Typeface.BOLD);
+            sBolds.add(bold);
+            return bold;
+        }
     }
 }
