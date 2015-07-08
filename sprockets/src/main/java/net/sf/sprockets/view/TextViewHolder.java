@@ -17,10 +17,10 @@
 
 package net.sf.sprockets.view;
 
+import android.support.annotation.Nullable;
 import android.widget.TextView;
 
-import butterknife.InjectView;
-import butterknife.Optional;
+import butterknife.Bind;
 
 /**
  * Holds TextViews that are commonly found in SDK layouts.
@@ -28,11 +28,11 @@ import butterknife.Optional;
  * @since 2.3.0
  */
 public class TextViewHolder extends ViewHolder {
-    @InjectView(android.R.id.text1)
+    @Bind(android.R.id.text1)
     public TextView text1;
 
-    @Optional
-    @InjectView(android.R.id.text2)
+    @Nullable
+    @Bind(android.R.id.text2)
     public TextView text2;
 
     @Override

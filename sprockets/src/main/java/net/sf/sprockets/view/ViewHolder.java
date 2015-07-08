@@ -17,10 +17,8 @@
 
 package net.sf.sprockets.view;
 
+import android.support.v4.util.SimpleArrayMap;
 import android.view.View;
-
-import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.MutableClassToInstanceMap;
 
 import butterknife.ButterKnife;
 
@@ -34,7 +32,7 @@ import butterknife.ButterKnife;
  * <pre><code> public class SomeHolder extends ViewHolder {
  *     {@literal @}InjectView(R.id.someView)
  *     View someView;
- *
+ * <p/>
  *     {@literal @}Override
  *     protected SomeHolder newInstance() {
  *         return new SomeHolder();
@@ -48,11 +46,11 @@ import butterknife.ButterKnife;
  * }</pre>
  */
 public abstract class ViewHolder {
-    private static final ClassToInstanceMap<ViewHolder> sHolders =
-            MutableClassToInstanceMap.create();
+    private static final SimpleArrayMap<Class<? extends ViewHolder>, ViewHolder> sHolders =
+            new SimpleArrayMap();
 
     /**
-     * Get a ViewHolder for the View that is {@link ButterKnife#inject(Object, View) injected} and
+     * Get a ViewHolder for the View that is {@link ButterKnife#bind(Object, View) bound} and
      * {@link View#setTag(Object) tagged} on the View.
      *
      * @param type must be public
@@ -60,11 +58,11 @@ public abstract class ViewHolder {
     public static <T extends ViewHolder> T get(View view, Class<T> type) {
         T holder = (T) view.getTag();
         if (holder == null) { // get a new instance for the view
-            holder = sHolders.getInstance(type);
+            holder = (T) sHolders.get(type);
             if (holder == null) { // get a new instance (factory) for creating new instances
                 try {
                     holder = type.newInstance();
-                    sHolders.putInstance(type, holder);
+                    sHolders.put(type, holder);
                 } catch (IllegalAccessException e) {
                     throw new IllegalArgumentException(
                             "couldn't instantiate implementation: " + type.getName(), e);
@@ -74,7 +72,7 @@ public abstract class ViewHolder {
                 }
             }
             holder = holder.newInstance();
-            ButterKnife.inject(holder, view);
+            ButterKnife.bind(holder, view);
             view.setTag(holder);
         }
         return holder;

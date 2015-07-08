@@ -142,8 +142,8 @@ public class Uris {
      * Get a {@code mailto} Uri with the headers. Any null or empty parameters are skipped. The
      * subject and body will be encoded.
      */
-    public static Uri mailto(List<String> to, List<String> cc, List<String> bcc, String subject,
-                             String body) {
+    public static Uri mailto(List<String> to, List<String> cc, List<String> bcc,
+                             String subject, String body) {
         String encSubject = Uri.encode(subject);
         String encBody = Uri.encode(body);
         StringBuilder ssp = new StringBuilder((to != null ? to.size() * 34 : 0)

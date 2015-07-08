@@ -10,13 +10,13 @@ import net.sf.sprockets.sample.R;
 import net.sf.sprockets.widget.GooglePlaceAutoComplete;
 import net.sf.sprockets.widget.GooglePlaceAutoComplete.OnPlaceClickListener;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 
 import static android.view.Gravity.CENTER;
 import static android.widget.Toast.LENGTH_LONG;
 
 public class GooglePlaceAutoCompleteActivity extends SprocketsActivity {
-    @InjectView(R.id.place)
+    @Bind(R.id.place)
     GooglePlaceAutoComplete mPlace;
 
     @Override

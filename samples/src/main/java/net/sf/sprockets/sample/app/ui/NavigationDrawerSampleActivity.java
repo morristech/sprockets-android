@@ -6,12 +6,12 @@ import android.support.v4.widget.DrawerLayout;
 import net.sf.sprockets.app.ui.NavigationDrawerActivity;
 import net.sf.sprockets.sample.R;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 
 import static android.view.Gravity.START;
 
 public class NavigationDrawerSampleActivity extends NavigationDrawerActivity {
-    @InjectView(R.id.root)
+    @Bind(R.id.root)
     DrawerLayout mDrawerLayout;
 
     @Override

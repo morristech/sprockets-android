@@ -27,7 +27,7 @@ import android.os.Bundle;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
-import net.sf.sprockets.util.StringArrays;
+import net.sf.sprockets.util.Elements;
 
 import java.util.Arrays;
 
@@ -165,13 +165,11 @@ public class Content {
         }
 
         public Query args(int... args) {
-            args(StringArrays.from(args));
-            return this;
+            return args(Elements.toStrings(args));
         }
 
         public Query args(long... args) {
-            args(StringArrays.from(args));
-            return this;
+            return args(Elements.toStrings(args));
         }
 
         public Query order(String order) {

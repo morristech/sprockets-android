@@ -30,7 +30,7 @@ import com.google.common.base.Supplier;
 import net.sf.sprockets.app.NavigationDrawerToggle;
 import net.sf.sprockets.view.ActionModePresenter;
 
-import java.util.Set;
+import java.util.List;
 
 import static android.view.Gravity.START;
 
@@ -96,7 +96,7 @@ public abstract class NavigationDrawerActivity extends SprocketsActivity impleme
      *
      * @return null when there aren't any ActionModePresenters
      */
-    public Set<ActionModePresenter> getActionModePresenters() {
+    public List<ActionModePresenter> getActionModePresenters() {
         return null;
     }
 
@@ -138,9 +138,9 @@ public abstract class NavigationDrawerActivity extends SprocketsActivity impleme
     /**
      * Supplies any ActionModePresenters from a subclass.
      */
-    private class Presenters implements Supplier<Set<ActionModePresenter>> {
+    private class Presenters implements Supplier<List<ActionModePresenter>> {
         @Override
-        public Set<ActionModePresenter> get() {
+        public List<ActionModePresenter> get() {
             return getActionModePresenters();
         }
     }

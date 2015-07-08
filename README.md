@@ -11,7 +11,7 @@ Extend base components, use widgets, and call utility methods.  Includes [Sprock
 Features
 --------
 
-Below is a sample of the available classes. See the [Javadoc][1] for the complete reference.
+Below is a sample of the available classes.  See the [Javadoc][1] for the complete reference.
 
 app |     |
 :-- | --- |
@@ -51,29 +51,15 @@ widget |     |
 Install
 -------
 
-(Requires *Android Support Repository* and *Google Repository* in the SDK Manager.)
-
-[Sample build.gradle](samples/build.gradle)
-
-1\. Add the dependency.
+1\. Add the dependency.  Requires *Android Support Repository* and *Google Repository* in the SDK Manager.
 
 ```groovy
-    compile 'net.sf.sprockets:sprockets-android:2.5.0'
+    compile 'net.sf.sprockets:sprockets-android:2.6.0'
 ```
 
-2\. Ensure the `buildTypes` have `minifyEnabled true`, download [proguard-sprockets.pro][10], and add it to `proguardFiles`.
+2\. *(Optional)* Add `minifyEnabled true` to all `buildTypes`.  Requires Android plug-in for Gradle 1.3.0 or later.
 
-3\. Tell ProGuard to ignore duplicate files.
-
-```groovy
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/services/javax.annotation.processing.Processor'
-    }
-```
-
-4\. (Optional) Download [sprockets.xml][11] to `src/main/resources/` and add your [Google API key][12] to it.
+3\. *(Optional)* Download [sprockets.xml][11] to `{app}/src/main/resources/` and add your [Google API key][12] to it.
 
 Notes
 -----
@@ -83,11 +69,12 @@ Notes
 Many features will work with lower API levels, though you should carefully test them to ensure that no APIs above your minimum level are accessed.  Tell the build system to allow higher API levels with the `tools:overrideLibrary` attribute in `AndroidManifest.xml`.
 
 ```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="your.package.name">
+<manifest
+    package="your.package.name"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="net.sf.sprockets, android.support.v13"/>
+    <uses-sdk tools:overrideLibrary="android.support.v13, net.sf.sprockets"/>
 ```
 
 [1]: https://pushbit.github.io/sprockets-android/apidocs/
@@ -97,7 +84,6 @@ Many features will work with lower API levels, though you should carefully test 
 [6]: https://search.maven.org/#search|ga|1|g%3Anet.sf.sprockets%20a%3Asprockets-android
 [7]: https://github.com/pushbit/sprockets
 
-[10]: https://raw.githubusercontent.com/pushbit/sprockets-android/master/sprockets/proguard-sprockets.pro
 [11]: https://raw.githubusercontent.com/pushbit/sprockets/master/src/main/resources/net/sf/sprockets/sprockets.xml
 [12]: https://console.developers.google.com/
 

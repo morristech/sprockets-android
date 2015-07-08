@@ -34,7 +34,7 @@ import icepick.Icepick;
 import icepick.Icicle;
 
 /**
- * {@link ButterKnife#inject(Object, View) Injects} content Views, saves the instance state of
+ * {@link ButterKnife#bind(Object, View) Binds} content Views, saves the instance state of
  * {@link Icicle} fields and restores them when recreated.
  * <p>
  * If you have an AbsListView that creates an {@link ActionMode} when items are checked, you can
@@ -156,10 +156,10 @@ public abstract class SprocketsFragment extends Fragment implements ActionModePr
     }
 
     /**
-     * {@link ButterKnife#inject(Object, View) Inject} content Views.
+     * {@link ButterKnife#bind(Object, View) Binds} content Views.
      */
     static void onViewCreated(Fragment frag, View view, Bundle savedInstanceState) {
-        ButterKnife.inject(frag, view);
+        ButterKnife.bind(frag, view);
     }
 
     /**
@@ -201,9 +201,9 @@ public abstract class SprocketsFragment extends Fragment implements ActionModePr
     }
 
     /**
-     * {@link ButterKnife#reset(Object) Reset} content Views.
+     * {@link ButterKnife#unbind(Object) Unbinds} content Views.
      */
     static void onDestroyView(Fragment frag) {
-        ButterKnife.reset(frag);
+        ButterKnife.unbind(frag);
     }
 }

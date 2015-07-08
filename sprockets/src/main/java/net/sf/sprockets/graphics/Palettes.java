@@ -21,6 +21,8 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.graphics.Palette.Builder;
 import android.support.v7.graphics.Palette.Swatch;
 
+import java.util.List;
+
 /**
  * Utility methods for working with Palettes.
  *
@@ -44,7 +46,10 @@ public class Palettes {
     public static Swatch getMostPopulousSwatch(Palette palette) {
         int highestPop = 0;
         Swatch mostPopulous = null;
-        for (Swatch swatch : palette.getSwatches()) {
+        List<Swatch> swatches = palette.getSwatches();
+        int size = swatches.size();
+        for (int i = 0; i < size; i++) {
+            Swatch swatch = swatches.get(i);
             int pop = swatch.getPopulation();
             if (pop > highestPop) {
                 highestPop = pop;

@@ -15,13 +15,14 @@ import net.sf.sprockets.app.ui.SprocketsFragment;
 import net.sf.sprockets.sample.R;
 import net.sf.sprockets.view.TranslateImagePageChangeListener;
 
-import butterknife.InjectView;
+import butterknife.Bind;
 import icepick.Icicle;
 
 public class TranslateImageActivity extends SprocketsActivity {
-    @InjectView(R.id.image)
+    @Bind(R.id.image)
     ImageView mImage;
-    @InjectView(R.id.pager)
+
+    @Bind(R.id.pager)
     ViewPager mPager;
 
     @Override
@@ -50,8 +51,9 @@ public class TranslateImageActivity extends SprocketsActivity {
     }
 
     public static class PageFragment extends SprocketsFragment {
-        @InjectView(R.id.page)
+        @Bind(R.id.page)
         TextView mPageView;
+
         @Icicle
         int mPage;
 

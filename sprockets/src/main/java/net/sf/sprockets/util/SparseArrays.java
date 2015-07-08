@@ -131,7 +131,8 @@ public class SparseArrays {
      * @return {@link Integer#MIN_VALUE} if the value is not found
      */
     private static int firstKey(SparseBooleanArray array, boolean value) {
-        for (int i = 0; i < array.size(); i++) {
+        int size = array.size();
+        for (int i = 0; i < size; i++) {
             if (array.valueAt(i) == value) {
                 return array.keyAt(i);
             }

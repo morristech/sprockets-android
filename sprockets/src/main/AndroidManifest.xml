@@ -1,7 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="net.sf.sprockets">
+<manifest package="net.sf.sprockets"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
         <service android:name=".app.ContentService"/>
     </application>
+
 </manifest>

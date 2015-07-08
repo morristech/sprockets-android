@@ -25,7 +25,7 @@ import icepick.Icepick;
 import icepick.Icicle;
 
 /**
- * {@link ButterKnife#inject(Activity) Injects} content Views, saves the instance state of
+ * {@link ButterKnife#bind(Activity) Binds} content Views, saves the instance state of
  * {@link Icicle} fields and restores them when recreated.
  */
 public abstract class SprocketsActivity extends Activity {
@@ -38,7 +38,7 @@ public abstract class SprocketsActivity extends Activity {
     @Override
     public void onContentChanged() {
         super.onContentChanged();
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
     }
 
     @Override

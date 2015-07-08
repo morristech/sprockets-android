@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
 import icepick.Icicle;
 
 /**
- * {@link ButterKnife#inject(Object, View) Injects} content Views, saves the instance state of
+ * {@link ButterKnife#bind(Object, View) Binds} content Views, saves the instance state of
  * {@link Icicle} fields and restores them when recreated.
  */
 public abstract class SprocketsDialogFragment extends DialogFragment {

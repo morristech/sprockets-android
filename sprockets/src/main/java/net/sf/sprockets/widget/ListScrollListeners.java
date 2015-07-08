@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
  * 
  * This file is part of Sprockets.
  * 
@@ -22,13 +22,13 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.Adapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 /**
  * Forwards {@link OnScrollListener} events to the added listeners.
  */
-public class ListScrollListeners extends HashSet<OnScrollListener> implements OnScrollListener {
+public class ListScrollListeners extends ArrayList<OnScrollListener> implements OnScrollListener {
     /**
      * Add listeners later.
      */
@@ -45,15 +45,17 @@ public class ListScrollListeners extends HashSet<OnScrollListener> implements On
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        for (OnScrollListener listener : this) {
-            listener.onScrollStateChanged(view, scrollState);
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            get(i).onScrollStateChanged(view, scrollState);
         }
     }
 
     @Override
     public void onScroll(AbsListView view, int first, int visible, int total) {
-        for (OnScrollListener listener : this) {
-            listener.onScroll(view, first, visible, total);
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            get(i).onScroll(view, first, visible, total);
         }
     }
 
@@ -65,8 +67,7 @@ public class ListScrollListeners extends HashSet<OnScrollListener> implements On
         private boolean mObserving;
 
         @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                             int totalItemCount) {
+        public void onScroll(AbsListView view, int first, int visible, int total) {
             if (!mObserving) {
                 Adapter adapter = view.getAdapter();
                 if (adapter != null) {
@@ -84,7 +85,7 @@ public class ListScrollListeners extends HashSet<OnScrollListener> implements On
         /**
          * Return true to approve the listener's request to execute its onScroll implementation.
          */
-        boolean onScroll(OnScrollListener listener, AbsListView view, int firstVisibleItem,
-                         int visibleItemCount, int totalItemCount);
+        boolean onScroll(OnScrollListener listener, AbsListView view,
+                         int first, int visible, int total);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
  * 
  * This file is part of Sprockets.
  * 
@@ -31,7 +31,7 @@ import net.sf.sprockets.R;
 import net.sf.sprockets.app.ui.NavigationDrawerActivity;
 import net.sf.sprockets.view.ActionModePresenter;
 
-import java.util.Set;
+import java.util.List;
 
 import static android.app.ActionBar.DISPLAY_SHOW_TITLE;
 import static android.app.ActionBar.NAVIGATION_MODE_STANDARD;
@@ -66,7 +66,7 @@ public class NavigationDrawerToggle extends ActionBarDrawerToggle {
     private int mMode;
     private CharSequence mTitle;
     private CharSequence mSubtitle;
-    private Supplier<Set<ActionModePresenter>> mSupplier;
+    private Supplier<List<ActionModePresenter>> mSupplier;
     private DrawerListener mListener;
     private long mDelay;
 
@@ -92,7 +92,7 @@ public class NavigationDrawerToggle extends ActionBarDrawerToggle {
      * @param supplier may supply null when there are no ActionModePresenters
      */
     public NavigationDrawerToggle setActionModePresentersSupplier(
-            Supplier<Set<ActionModePresenter>> supplier) {
+            Supplier<List<ActionModePresenter>> supplier) {
         mSupplier = supplier;
         return this;
     }
@@ -220,9 +220,11 @@ public class NavigationDrawerToggle extends ActionBarDrawerToggle {
      */
     private boolean hideActionMode(boolean hide) {
         boolean changed = false;
-        Set<ActionModePresenter> presenters = mSupplier != null ? mSupplier.get() : null;
+        List<ActionModePresenter> presenters = mSupplier != null ? mSupplier.get() : null;
         if (presenters != null) {
-            for (ActionModePresenter presenter : presenters) {
+            int size = presenters.size();
+            for (int i = 0; i < size; i++) {
+                ActionModePresenter presenter = presenters.get(i);
                 boolean change = hide ? presenter.hideActionMode() : presenter.restoreActionMode();
                 if (!changed && change) {
                     changed = true;

@@ -44,9 +44,10 @@ public class Trackers {
     /**
      * Use the Tracker to send hits.
      */
-    public static void use(Context context, Tracker tracker) {
+    public static Tracker use(Context context, Tracker tracker) {
         sContext = context.getApplicationContext();
         sTracker = tracker;
+        return tracker;
     }
 
     /**
