@@ -25,17 +25,21 @@ import android.widget.BaseAdapter;
 import net.sf.sprockets.google.Place;
 import net.sf.sprockets.google.Places;
 
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * Adapter for a list of places, likely received from a {@link Places} method. Implement
  * {@link #getView(int, Place, View, ViewGroup)} to define how each place will be displayed.
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/GooglePlacesLoaderActivity.java" target="_blank">Sample Usage</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/GooglePlacesLoaderActivity.java"
+ * target="_blank">Sample Usage</a>
  * </p>
  */
 public abstract class GooglePlacesAdapter extends BaseAdapter {
-    private List<Place> mPlaces;
+    private List<Place> mPlaces = Collections.emptyList();
     private int mCount;
 
     /**
@@ -55,23 +59,21 @@ public abstract class GooglePlacesAdapter extends BaseAdapter {
      * Use these new places instead of the old places.
      *
      * @param places can be null to empty the list
-     * @return the old places or null if there weren't any or the object references are equal
+     * @return the old places or null if the object references are equal
      */
     public List<Place> swapPlaces(List<Place> places) {
         if (mPlaces == places) {
             return null;
         }
         List<Place> old = mPlaces;
-        mPlaces = places;
-        mCount = places != null ? places.size() : 0;
+        mPlaces = places != null ? places : EMPTY_LIST;
+        mCount = mPlaces.size();
         notifyDataSetChanged();
         return old;
     }
 
     /**
      * Get the places that are currently backing the list.
-     *
-     * @return null if the list is currently empty
      */
     public List<Place> getPlaces() {
         return mPlaces;
