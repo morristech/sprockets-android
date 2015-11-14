@@ -19,11 +19,24 @@ package net.sf.sprockets.database;
 
 import android.database.Cursor;
 
+import static org.apache.commons.lang.ArrayUtils.EMPTY_INT_ARRAY;
+import static org.apache.commons.lang.ArrayUtils.EMPTY_LONG_ARRAY;
+import static org.apache.commons.lang.ArrayUtils.EMPTY_STRING_ARRAY;
+
 /**
  * Utility methods for working with Cursors.
  */
 public class Cursors {
     private Cursors() {
+    }
+
+    /**
+     * True if the cursor position is between first and last (inclusive).
+     *
+     * @since 3.0.0
+     */
+    public static boolean isActive(Cursor cursor) {
+        return !cursor.isClosed() && !cursor.isBeforeFirst() && !cursor.isAfterLast();
     }
 
     /**
@@ -112,7 +125,6 @@ public class Cursors {
     /**
      * Get all int values in the first column and then close the cursor.
      *
-     * @return null if the cursor is empty
      * @since 2.5.0
      */
     public static int[] allInts(Cursor cursor) {
@@ -123,11 +135,10 @@ public class Cursors {
      * Get all int values in the first column.
      *
      * @param close true to close the cursor or false to leave it open
-     * @return null if the cursor is empty
      * @since 2.5.0
      */
     public static int[] allInts(Cursor cursor, boolean close) {
-        int[] i = null;
+        int[] i = EMPTY_INT_ARRAY;
         if (cursor.moveToFirst()) {
             i = new int[cursor.getCount()];
             do {
@@ -140,8 +151,6 @@ public class Cursors {
 
     /**
      * Get all long values in the first column and then close the cursor.
-     *
-     * @return null if the cursor is empty
      */
     public static long[] allLongs(Cursor cursor) {
         return allLongs(cursor, true);
@@ -151,10 +160,9 @@ public class Cursors {
      * Get all long values in the first column.
      *
      * @param close true to close the cursor or false to leave it open
-     * @return null if the cursor is empty
      */
     public static long[] allLongs(Cursor cursor, boolean close) {
-        long[] l = null;
+        long[] l = EMPTY_LONG_ARRAY;
         if (cursor.moveToFirst()) {
             l = new long[cursor.getCount()];
             do {
@@ -167,8 +175,6 @@ public class Cursors {
 
     /**
      * Get all String values in the first column and then close the cursor.
-     *
-     * @return null if the cursor is empty
      */
     public static String[] allStrings(Cursor cursor) {
         return allStrings(cursor, true);
@@ -178,10 +184,9 @@ public class Cursors {
      * Get all String values in the first column.
      *
      * @param close true to close the cursor or false to leave it open
-     * @return null if the cursor is empty
      */
     public static String[] allStrings(Cursor cursor, boolean close) {
-        String[] s = null;
+        String[] s = EMPTY_STRING_ARRAY;
         if (cursor.moveToFirst()) {
             s = new String[cursor.getCount()];
             do {
