@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
  * 
  * This file is part of Sprockets.
  * 
@@ -17,6 +17,7 @@
 
 package net.sf.sprockets.net;
 
+import android.Manifest.permission;
 import android.content.Context;
 import android.net.NetworkInfo;
 
@@ -30,17 +31,13 @@ public class Network {
     }
 
     /**
-     * True if any network interfaces are connected.
+     * True if a data network is connected.
+     * <p>
+     * Requires {@link permission#ACCESS_NETWORK_STATE ACCESS_NETWORK_STATE} permission.
+     * </p>
      */
     public static boolean isConnected(Context context) {
-        NetworkInfo[] all = Managers.connectivity(context).getAllNetworkInfo();
-        if (all != null) {
-            for (NetworkInfo net : all) {
-                if (net.isConnected()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        NetworkInfo info = Managers.connectivity(context).getActiveNetworkInfo();
+        return info != null && info.isConnected();
     }
 }
