@@ -27,6 +27,7 @@ import java.util.Set;
 
 import static android.content.Context.MODE_MULTI_PROCESS;
 import static android.content.Context.MODE_PRIVATE;
+import static java.util.Collections.EMPTY_SET;
 
 /**
  * Utility methods for working with SharedPreferences and keys used within the library.
@@ -368,11 +369,10 @@ public class Prefs {
     /**
      * Get a set of values from the default SharedPreferences. Do not modify the returned Set.
      *
-     * @return null if the key does not exist
      * @see SharedPreferences#getStringSet(String, Set)
      */
     public static Set<String> getStringSet(Context context, String key) {
-        return getStringSet(context, key, (Set<String>) null);
+        return getStringSet(context, key, EMPTY_SET);
     }
 
     /**
@@ -387,11 +387,10 @@ public class Prefs {
     /**
      * Get a set of values from the SharedPreferences. Do not modify the returned Set.
      *
-     * @return null if the key does not exist
      * @see SharedPreferences#getStringSet(String, Set)
      */
     public static Set<String> getStringSet(Context context, String name, String key) {
-        return getStringSet(context, name, key, null);
+        return getStringSet(context, name, key, EMPTY_SET);
     }
 
     /**
