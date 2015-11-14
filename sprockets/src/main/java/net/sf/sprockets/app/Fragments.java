@@ -42,7 +42,7 @@ public class Fragments {
     public static Bundle arguments(Fragment frag) {
         Bundle args = frag.getArguments();
         if (args == null) {
-            if (frag.getActivity() == null) {
+            if (!frag.isAdded()) {
                 args = new Bundle();
                 frag.setArguments(args);
             } else {
