@@ -24,12 +24,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-
 import net.sf.sprockets.util.Elements;
 
-import java.util.Arrays;
+import org.immutables.value.Value.Default;
+import org.immutables.value.Value.Modifiable;
+import org.immutables.value.Value.Style;
+
+import javax.annotation.Nullable;
 
 import static android.content.ContentResolver.SYNC_EXTRAS_EXPEDITED;
 import static android.content.ContentResolver.SYNC_EXTRAS_MANUAL;
@@ -121,88 +122,57 @@ public class Content {
     }
 
     /**
+     * <p>
      * Holds parameters that are used in a
-     * {@link ContentResolver#query(Uri, String[], String, String[], String) query}.
+     * {@link ContentResolver#query(Uri, String[], String, String[], String) query}. Example usage:
+     * </p>
+     * <pre>{@code
+     * Query.create().uri(SOME_URI).proj("column_name").sel("other_column = ?").args(value);
+     * }</pre>
      *
      * @since 2.3.0
      */
-    public static class Query {
-        public Uri uri;
-        public String[] proj;
-        public String sel;
-        public String[] args;
-        public String order;
-
-        public Query() {
+    @Modifiable
+    @Style(typeModifiable = "Mutable*", create = "new", get = "*", set = "*")
+    public static abstract class Query {
+        Query() {
         }
 
-        public Query(Uri uri, String[] proj, String sel, String[] args, String order) {
-            this.uri = uri;
-            this.proj = proj;
-            this.sel = sel;
-            this.args = args;
-            this.order = order;
+        /**
+         * Mutable instance where values can be set.
+         *
+         * @since 3.0.0
+         */
+        public static MutableQuery create() {
+            return new MutableQuery();
         }
 
-        public Query uri(Uri uri) {
-            this.uri = uri;
-            return this;
+        public abstract Uri uri();
+
+        @Default
+        public String[] proj() { // to be @Nullable and abstract when Immutables supports varargs
+            return null;
         }
 
-        public Query proj(String... proj) {
-            this.proj = proj;
-            return this;
+        @Nullable
+        public abstract String sel();
+
+        @Default
+        public String[] args() { // same as proj() above
+            return null;
         }
 
-        public Query sel(String sel) {
-            this.sel = sel;
-            return this;
-        }
+        public abstract MutableQuery args(String... args);
 
-        public Query args(String... args) {
-            this.args = args;
-            return this;
-        }
-
-        public Query args(int... args) {
+        public MutableQuery args(int... args) {
             return args(Elements.toStrings(args));
         }
 
-        public Query args(long... args) {
+        public MutableQuery args(long... args) {
             return args(Elements.toStrings(args));
         }
 
-        public Query order(String order) {
-            this.order = order;
-            return this;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(uri, Arrays.hashCode(proj), sel, Arrays.hashCode(args), order);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o != null) {
-                if (this == o) {
-                    return true;
-                } else if (o instanceof Query) {
-                    Query q = (Query) o;
-                    return Objects.equal(uri, q.uri) && Arrays.equals(proj, q.proj)
-                            && Objects.equal(sel, q.sel) && Arrays.equals(args, q.args)
-                            && Objects.equal(order, q.order);
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this).add("uri", uri)
-                    .add("proj", Arrays.toString(proj)).add("sel", sel)
-                    .add("args", Arrays.toString(args)).add("order", order)
-                    .omitNullValues().toString();
-        }
+        @Nullable
+        public abstract String order();
     }
 }

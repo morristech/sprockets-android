@@ -27,24 +27,20 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-
 import net.sf.sprockets.database.Cursors;
-import net.sf.sprockets.database.Operation;
 import net.sf.sprockets.database.sqlite.DbOpenHelper;
 
-import java.util.Arrays;
+import org.immutables.value.Value.Default;
+import org.immutables.value.Value.Modifiable;
+import org.immutables.value.Value.Style;
+
+import javax.annotation.Nullable;
 
 import static net.sf.sprockets.content.Content.CALLER_IS_SYNCADAPTER;
 import static net.sf.sprockets.content.Content.GROUP_BY;
 import static net.sf.sprockets.content.Content.HAVING;
 import static net.sf.sprockets.content.Content.LIMIT;
 import static net.sf.sprockets.content.Content.NOTIFY_CHANGE;
-import static net.sf.sprockets.database.Operation.DELETE;
-import static net.sf.sprockets.database.Operation.INSERT;
-import static net.sf.sprockets.database.Operation.SELECT;
-import static net.sf.sprockets.database.Operation.UPDATE;
 
 /**
  * ContentProvider with a SQLite database back end that implements all common database operations
@@ -53,6 +49,11 @@ import static net.sf.sprockets.database.Operation.UPDATE;
  * statement elements.
  */
 public abstract class DbContentProvider extends ContentProvider {
+    private static final int SELECT = 0;
+    private static final int INSERT = 1;
+    private static final int UPDATE = 2;
+    private static final int DELETE = 3;
+
     /**
      * Subclass provided helper for database connections.
      */
@@ -75,20 +76,21 @@ public abstract class DbContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] proj, String sel, String[] args, String order) {
         Sql sql = elements(SELECT, uri, proj, sel, args, order);
+        Uri notify = sql.notifyUri();
         sql.mResult.setNotificationUri(getContext().getContentResolver(),
-                sql.mNotify != null ? sql.mNotify : uri);
+                notify != null ? notify : uri);
         return sql.mResult;
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues vals) {
         Sql sql = elements(INSERT, uri, null, null, null, null);
-        long id = mHelper.getWritableDatabase().insert(sql.mTable, null, vals);
-        sql.mNotify = ContentUris.withAppendedId(sql.mNotify, id);
+        long id = mHelper.getWritableDatabase().insert(sql.table(), null, vals);
+        Uri notify = ContentUris.withAppendedId(sql.notifyUri(), id);
         if (id > 0) {
-            notifyChange(sql.mNotify, uri);
+            notifyChange(notify, uri);
         }
-        return sql.mNotify;
+        return notify;
     }
 
     @Override
@@ -104,17 +106,19 @@ public abstract class DbContentProvider extends ContentProvider {
     /**
      * Update or delete records and get the number of rows affected.
      */
-    private int updDel(Operation op, Uri uri, ContentValues vals, String sel, String[] args) {
+    private int updDel(int op, Uri uri, ContentValues vals, String sel, String[] args) {
         /* get the IDs of records that will be affected */
         Sql sql = elements(op, uri, new String[]{"rowid"}, sel, args, null);
         long[] ids = Cursors.allLongs(sql.mResult);
         /* update or delete the records and then notify about any changes */
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        int rows = op == UPDATE ? db.update(sql.mTable, vals, sql.mSel, sql.mArgs)
-                : db.delete(sql.mTable, !TextUtils.isEmpty(sql.mSel) ? sql.mSel : "1", sql.mArgs);
+        sel = sql.sel();
+        int rows = op == UPDATE ? db.update(sql.table(), vals, sel, sql.args())
+                : db.delete(sql.table(), !TextUtils.isEmpty(sel) ? sel : "1", sql.args());
         if (rows > 0) {
+            Uri notify = sql.notifyUri();
             for (long id : ids) {
-                notifyChange(ContentUris.withAppendedId(sql.mNotify, id), uri);
+                notifyChange(ContentUris.withAppendedId(notify, id), uri);
             }
         }
         return rows;
@@ -140,7 +144,7 @@ public abstract class DbContentProvider extends ContentProvider {
      *
      * @return null if the URI does not need translation
      */
-    protected Sql translate(Uri uri) {
+    protected MutableSql translate(Uri uri) {
         return null;
     }
 
@@ -148,187 +152,142 @@ public abstract class DbContentProvider extends ContentProvider {
      * Get the updated SQL elements for the URI and, when not inserting, a cursor with the query
      * results.
      */
-    private Sql elements(Operation op, Uri uri, String[] proj, String sel, String[] args,
-                         String order) {
-        Sql sql = translate(uri);
+    private Sql elements(int op, Uri uri, String[] proj, String sel, String[] args, String order) {
+        MutableSql sql = translate(uri);
         if (sql == null) {
-            sql = new Sql();
+            sql = Sql.create();
         }
-        if (sql.mTable == null) {
-            sql.mTable = uri.getPathSegments().get(0);
+        if (sql.table() == null) {
+            sql.table(uri.getPathSegments().get(0));
         }
-        if (sql.mNotify == null && op != SELECT) {
-            sql.mNotify = uri.buildUpon().path(sql.mTable).clearQuery().fragment(null).build();
+        if (sql.notifyUri() == null && op != SELECT) {
+            sql.notifyUri(uri.buildUpon().path(sql.table()).clearQuery().fragment(null).build());
         }
         if (op != INSERT) { // run the query and return the cursor
-            String from = sql.mJoin != null ? sql.mTable + ' ' + sql.mJoin : sql.mTable;
-            if ((sql.mSel == null || sql.mArgs == null) && uri.getPathSegments().size() == 2) {
+            String from = sql.join() != null ? sql.table() + ' ' + sql.join() : sql.table();
+            if ((sql.sel() == null || sql.args() == null) && uri.getPathSegments().size() == 2) {
                 try { // filter on ID if URI in /table/id format
                     long id = ContentUris.parseId(uri);
                     if (id > 0) {
-                        if (sql.mSel == null) {
-                            sql.mSel = "rowid = ?";
+                        if (sql.sel() == null) {
+                            sql.sel("rowid = ?");
                         }
-                        if (sql.mArgs == null) {
-                            sql.mArgs = new String[]{String.valueOf(id)};
+                        if (sql.args() == null) {
+                            sql.args(String.valueOf(id));
                         }
                     }
                 } catch (NumberFormatException e) { // last segment not a number
                 }
             }
             if (sel != null) { // append caller values
-                sql.mSel = DatabaseUtils.concatenateWhere(sql.mSel, sel);
+                sql.sel(DatabaseUtils.concatenateWhere(sql.sel(), sel));
             }
             if (args != null) {
-                sql.mArgs = DatabaseUtils.appendSelectionArgs(sql.mArgs, args);
+                sql.args(DatabaseUtils.appendSelectionArgs(sql.args(), args));
             }
             String groupBy = uri.getQueryParameter(GROUP_BY);
             if (groupBy != null) { // prefer caller's value
-                sql.mGroupBy = groupBy;
+                sql.groupBy(groupBy);
             }
             String having = uri.getQueryParameter(HAVING);
             if (having != null) {
-                sql.mHaving = having;
+                sql.having(having);
             }
             if (order != null) {
-                sql.mOrderBy = order;
+                sql.orderBy(order);
             }
             String limit = uri.getQueryParameter(LIMIT);
             if (limit != null) {
-                sql.mLimit = limit;
+                sql.limit(limit);
             }
-            sql.mResult = mHelper.getReadableDatabase().query(from, proj, sql.mSel, sql.mArgs,
-                    sql.mGroupBy, sql.mHaving, sql.mOrderBy, sql.mLimit);
+            sql.mResult = mHelper.getReadableDatabase().query(from, proj, sql.sel(), sql.args(),
+                    sql.groupBy(), sql.having(), sql.orderBy(), sql.limit());
         }
         return sql;
     }
 
     /**
      * <p>
-     * Elements of a SQL statement that have been derived from a URI. All methods return their
-     * instance so that calls can be chained. For example:
+     * Elements of a SQL statement that have been derived from a URI. Example usage:
      * </p>
      * <pre>{@code
-     * Sql sql = new Sql().sel("column_name = ?").args(new String[]{value});
+     * Sql.create().sel("column_name = ?").args(value);
      * }</pre>
      */
-    public static class Sql {
-        private String mTable;
-        private String mJoin;
-        private String mSel;
-        private String[] mArgs;
-        private String mGroupBy;
-        private String mHaving;
-        private String mOrderBy;
-        private String mLimit;
-        private Cursor mResult;
-        private Uri mNotify;
+    @Modifiable
+    @Style(typeModifiable = "Mutable*", create = "new", get = "*", set = "*")
+    public static abstract class Sql {
+        Cursor mResult;
+
+        Sql() {
+        }
 
         /**
-         * Only needs to be specified if it's different from the first path segment of the URI.
+         * Mutable instance where values can be set.
+         *
+         * @since 3.0.0
          */
-        public Sql table(String table) {
-            mTable = table;
-            return this;
+        public static MutableSql create() {
+            return new MutableSql();
         }
+
+        /**
+         * Only specified if it's different from the first path segment of the URI.
+         */
+        @Nullable
+        public abstract String table();
 
         /**
          * JOIN clause following the table name for use in SELECT operations.
          */
-        public Sql join(String join) {
-            mJoin = join;
-            return this;
-        }
+        @Nullable
+        public abstract String join();
 
         /**
          * WHERE clause with {@code ?} arguments.
          */
-        public Sql sel(String sel) {
-            mSel = sel;
-            return this;
-        }
+        @Nullable
+        public abstract String sel();
 
         /**
          * Arguments for the WHERE clause.
          */
-        public Sql args(String[] args) {
-            mArgs = args;
-            return this;
+        @Default
+        public String[] args() { // to be @Nullable and abstract when Immutables supports varargs
+            return null;
         }
 
         /**
          * Default GROUP BY clause that will be used if the caller did not provide their own value.
          */
-        public Sql groupBy(String groupBy) {
-            mGroupBy = groupBy;
-            return this;
-        }
+        @Nullable
+        public abstract String groupBy();
 
         /**
          * Default HAVING clause that will be used if the caller did not provide their own value.
          */
-        public Sql having(String having) {
-            mHaving = having;
-            return this;
-        }
+        @Nullable
+        public abstract String having();
 
         /**
          * Default ORDER BY clause that will be used if the caller did not provide their own value.
          */
-        public Sql orderBy(String orderBy) {
-            mOrderBy = orderBy;
-            return this;
-        }
+        @Nullable
+        public abstract String orderBy();
 
         /**
          * Default LIMIT clause that will be used if the caller did not provide their own value.
          *
          * @since 2.3.0
          */
-        public Sql limit(String limit) {
-            mLimit = limit;
-            return this;
-        }
+        @Nullable
+        public abstract String limit();
 
         /**
-         * Only needs to be specified if the path should be something other than the table name
-         * followed by a rowid segment.
+         * Only specified if the path should be something other than the table name followed by a
+         * rowid segment.
          */
-        public Sql notify(Uri notify) {
-            mNotify = notify;
-            return this;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(mTable, mJoin, mSel, Arrays.hashCode(mArgs), mGroupBy, mHaving,
-                    mOrderBy, mLimit, mNotify);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o != null) {
-                if (this == o) {
-                    return true;
-                } else if (o instanceof Sql) {
-                    Sql s = (Sql) o;
-                    return Objects.equal(mTable, s.mTable) && Objects.equal(mJoin, s.mJoin)
-                            && Objects.equal(mSel, s.mSel) && Arrays.equals(mArgs, s.mArgs)
-                            && Objects.equal(mGroupBy, s.mGroupBy)
-                            && Objects.equal(mHaving, s.mHaving)
-                            && Objects.equal(mOrderBy, s.mOrderBy)
-                            && Objects.equal(mLimit, s.mLimit) && Objects.equal(mNotify, s.mNotify);
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this).add("table", mTable).add("join", mJoin)
-                    .add("sel", mSel).add("args", Arrays.toString(mArgs)).add("groupBy", mGroupBy)
-                    .add("having", mHaving).add("orderBy", mOrderBy).add("limit", mLimit)
-                    .add("notify", mNotify).omitNullValues().toString();
-        }
+        @Nullable
+        public abstract Uri notifyUri();
     }
 }
