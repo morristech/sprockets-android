@@ -59,7 +59,7 @@ public abstract class LocalCursorLoader extends EasyCursorLoader {
      * location will be provided to {@link #onLocation(Location)}.
      */
     public LocalCursorLoader(Context context, Query q) {
-        this(context, q.uri, q.proj, q.sel, q.args, q.order);
+        this(context, q.uri(), q.proj(), q.sel(), q.args(), q.order());
     }
 
     /**

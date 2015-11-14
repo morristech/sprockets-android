@@ -9,14 +9,14 @@
         style="@style/NavigationDrawerSubItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_gear"
+        android:drawablePadding="@dimen/padding"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:maxLines="1"
         android:minHeight="@dimen/min_touch_size"
         android:paddingLeft="@dimen/padding_large"
-        android:gravity="center_vertical"
-        android:text="@string/settings"
-        android:maxLines="1"
-        android:ellipsize="marquee"
-        android:drawableLeft="@drawable/ic_gear"
-        android:drawablePadding="@dimen/padding"/>
+        android:text="@string/settings"/>
 
     <include layout="@layout/list_divider"/>
 

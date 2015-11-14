@@ -37,6 +37,7 @@ import static android.app.ActionBar.DISPLAY_SHOW_TITLE;
 import static android.app.ActionBar.NAVIGATION_MODE_STANDARD;
 import static android.view.Gravity.LEFT;
 import static android.view.Gravity.START;
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * Manages the ActionBar of an Activity that contains a navigation DrawerLayout according to the
@@ -220,15 +221,12 @@ public class NavigationDrawerToggle extends ActionBarDrawerToggle {
      */
     private boolean hideActionMode(boolean hide) {
         boolean changed = false;
-        List<ActionModePresenter> presenters = mSupplier != null ? mSupplier.get() : null;
-        if (presenters != null) {
-            int size = presenters.size();
-            for (int i = 0; i < size; i++) {
-                ActionModePresenter presenter = presenters.get(i);
-                boolean change = hide ? presenter.hideActionMode() : presenter.restoreActionMode();
-                if (!changed && change) {
-                    changed = true;
-                }
+        List<ActionModePresenter> presenters = mSupplier != null ? mSupplier.get() : EMPTY_LIST;
+        for (int i = 0, size = presenters.size(); i < size; i++) {
+            ActionModePresenter presenter = presenters.get(i);
+            boolean change = hide ? presenter.hideActionMode() : presenter.restoreActionMode();
+            if (!changed && change) {
+                changed = true;
             }
         }
         return changed;

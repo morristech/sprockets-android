@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment
-    android:id="@+id/settings"
-    class="net.sf.sprockets.app.ui.SprocketsPreferenceFragment"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:preferences="@xml/preferences"/>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:app="http://schemas.android.com/apk/res-auto"
+          android:id="@+id/settings"
+          class="net.sf.sprockets.app.ui.SprocketsPreferenceFragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          app:preferences="@xml/preferences"/>

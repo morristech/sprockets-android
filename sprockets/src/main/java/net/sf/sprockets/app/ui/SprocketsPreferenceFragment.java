@@ -66,10 +66,11 @@ import static net.sf.sprockets.gms.analytics.Trackers.event;
  * {@link #onPreferenceChange(Preference, Object) onPreferenceChange}. This class already sets
  * itself as the {@link OnPreferenceChangeListener OnPreferenceChangeListener} for each Preference.
  * </p>
- * <p>
- * XML Attributes: {@link #newInstance(int) preferences},
- * {@link #newInstance(int, boolean) trackChanges}
- * </p>
+ * <p>XML Attributes:</p>
+ * <ul>
+ * <li>{@link #newInstance(int) preferences}</li>
+ * <li>{@link #newInstance(int, boolean) trackChanges}</li>
+ * </ul>
  * <p>
  * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/settings.xml"
  * target="_blank">Sample Usage</a>

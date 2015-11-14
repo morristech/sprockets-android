@@ -47,8 +47,10 @@ public abstract class SprocketsFragment extends Fragment implements ActionModePr
      * Shortcut to {@link #getActivity()}.
      */
     protected Activity a;
+
     @Icicle
     int[] mCheckedItemPos;
+
     @Icicle
     SparseArray<Bundle> mLoaderArgs;
 

@@ -33,7 +33,7 @@ public class ReadCursorLoader extends CursorWrapperLoader<ReadCursor> {
     }
 
     public ReadCursorLoader(Context context, Query q) {
-        this(context, q.uri, q.proj, q.sel, q.args, q.order);
+        this(context, q.uri(), q.proj(), q.sel(), q.args(), q.order());
     }
 
     public ReadCursorLoader(Context context, Uri uri, String[] projection, String selection,

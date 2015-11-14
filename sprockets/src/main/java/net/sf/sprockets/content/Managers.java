@@ -88,8 +88,6 @@ import static android.content.Context.WINDOW_SERVICE;
  * other Managers.
  */
 public class Managers {
-    private static BackupManager sBackup;
-
     private Managers() {
     }
 
@@ -112,6 +110,8 @@ public class Managers {
     public static AudioManager audio(Context context) {
         return (AudioManager) context.getSystemService(AUDIO_SERVICE);
     }
+
+    private static BackupManager sBackup;
 
     /**
      * @since 2.4.0

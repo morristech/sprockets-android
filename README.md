@@ -51,15 +51,15 @@ widget |     |
 Install
 -------
 
-1\. Add the dependency.  Requires *Android Support Repository* and *Google Repository* in the SDK Manager.
+1\. Add dependency.  Requires *Android Support Repository* and *Google Repository* in SDK Manager.
 
 ```groovy
-    compile 'net.sf.sprockets:sprockets-android:2.6.0'
+    compile 'net.sf.sprockets:sprockets-android:3.0.0'
 ```
 
-2\. *(Optional)* Add `minifyEnabled true` to all `buildTypes`.  Requires Android plug-in for Gradle 1.3.0 or later.
+2\. *(Optional)* Add `minifyEnabled true` to all `buildTypes`.  Requires Android plug-in for Gradle 1.3.0+.
 
-3\. *(Optional)* Download [sprockets.xml][11] to `{app}/src/main/resources/` and add your [Google API key][12] to it.
+3\. *(Optional)* Download [sprockets.xml][11] to `{app}/src/main/resources/` and add your [Google API key][12].
 
 Notes
 -----

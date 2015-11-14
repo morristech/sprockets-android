@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -30,10 +30,12 @@ import net.sf.sprockets.widget.ListScrollListeners.OnScrollApprover;
  * Synchronises the scrolling of a View with a ListView, at a speed relative to the list scrolling
  * speed.
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/ParallaxViewActivity.java" target="_blank">Sample Usage</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/ParallaxViewActivity.java"
+ * target="_blank">Sample Usage</a>
  * </p>
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/parallax_view.xml" target="_blank">Sample Layout</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/parallax_view.xml"
+ * target="_blank">Sample Layout</a>
  * </p>
  */
 public class ParallaxViewScrollListener extends ObservingScrollListener {

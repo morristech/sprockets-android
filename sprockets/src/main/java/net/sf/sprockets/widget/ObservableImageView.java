@@ -131,8 +131,7 @@ public class ObservableImageView extends ImageView {
      */
     private class ImageViewObservable extends Observable<ImageViewObserver> {
         private void onDrawableChanged() {
-            int size = mObservers.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = 0, size = mObservers.size(); i < size; i++) {
                 mObservers.get(i).onDrawableChanged();
             }
         }

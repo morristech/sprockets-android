@@ -44,7 +44,7 @@ public class EasyCursor extends CursorWrapper {
      */
     public EasyCursor(Context context, Query query) {
         super(context.getContentResolver()
-                .query(query.uri, query.proj, query.sel, query.args, query.order));
+                .query(query.uri(), query.proj(), query.sel(), query.args(), query.order()));
     }
 
     /**

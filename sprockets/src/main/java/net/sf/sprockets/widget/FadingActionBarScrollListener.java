@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -45,7 +45,8 @@ import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
  * <strong>Note:</strong> Currently only ListView is supported.
  * </p>
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/FadingActionBarActivity.java" target="_blank">Sample Usage</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/FadingActionBarActivity.java"
+ * target="_blank">Sample Usage</a>
  * </p>
  */
 public class FadingActionBarScrollListener extends ObservingScrollListener {
@@ -60,14 +61,17 @@ public class FadingActionBarScrollListener extends ObservingScrollListener {
     private final SpannableStringBuilder mTitle;
     private final MutableForegroundAlphaSpan mTitleSpan;
     private final Drawable mBackground;
+
     /**
      * When this adapter position is at the top of the list, the ActionBar will be opaque.
      */
     private final int mPos;
+
     private int mMinTitleAlpha;
     private int mMinBgAlpha;
     private int mOpaqueOffset;
     private OnScrollApprover mApprover;
+
     /**
      * Starting location of the View at {@link #mPos}, used to calculate fade while scrolling.
      */

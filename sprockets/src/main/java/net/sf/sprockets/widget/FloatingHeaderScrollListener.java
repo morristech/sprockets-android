@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -42,10 +42,12 @@ import net.sf.sprockets.widget.ListScrollListeners.OnScrollApprover;
  * that it will not obscure the list header or content.
  * </p>
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/FloatingHeaderActivity.java" target="_blank">Sample Usage</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/FloatingHeaderActivity.java"
+ * target="_blank">Sample Usage</a>
  * </p>
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/floating_header.xml" target="_blank">Sample Layout</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/floating_header.xml"
+ * target="_blank">Sample Layout</a>
  * </p>
  */
 public class FloatingHeaderScrollListener implements OnScrollListener {

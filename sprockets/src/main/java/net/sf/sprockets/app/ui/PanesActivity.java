@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -41,7 +41,8 @@ import static butterknife.ButterKnife.findById;
  * {@link #setDefaultContentView()} to use the library's default layout for the panes.
  * </p>
  * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/PanesSampleActivity.java" target="_blank">Sample Implementation</a>
+ * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/PanesSampleActivity.java"
+ * target="_blank">Sample Implementation</a>
  * </p>
  */
 public abstract class PanesActivity extends SprocketsActivity {
@@ -49,10 +50,12 @@ public abstract class PanesActivity extends SprocketsActivity {
      * Tag for the first fragment.
      */
     private static final String PANE_1 = PanesActivity.class.getName() + ".pane_1";
+
     /**
      * Tag for the second fragment.
      */
     private static final String PANE_2 = PanesActivity.class.getName() + ".pane_2";
+
     private static final String[] sPanes = {PANE_1, PANE_2};
 
     /**

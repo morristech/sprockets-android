@@ -61,6 +61,7 @@ public class Interpolators {
      */
     public static final FastOutSlowInInterpolator FAST_OUT_SLOW_IN =
             new FastOutSlowInInterpolator();
+
     public static final LinearInterpolator LINEAR = new LinearInterpolator();
 
     /**

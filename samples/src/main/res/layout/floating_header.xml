@@ -11,9 +11,9 @@
         style="@style/Card.Title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/floating_header_height"
-        android:text="@string/floating_header"
-        android:gravity="center"
         android:background="#99CC00"
+        android:gravity="center"
+        android:text="@string/floating_header"
         android:translationY="@dimen/floating_header_y"/>
 
 </merge>

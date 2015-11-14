@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
  * 
  * This file is part of Sprockets.
  * 
@@ -28,7 +28,8 @@ import android.text.style.ForegroundColorSpan;
  * the View in order to see the changes reflected.
  * <p>
  * Inspired by Flavien Laurent's
- * <a href="http://flavienlaurent.com/blog/2014/01/31/spans/" target="_blank">Spans, a Powerful Concept.</a>
+ * <a href="http://flavienlaurent.com/blog/2014/01/31/spans/"
+ * target="_blank">Spans, a Powerful Concept.</a>
  * </p>
  */
 public class MutableForegroundColorSpan extends ForegroundColorSpan {

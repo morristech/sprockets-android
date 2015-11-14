@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/cards_parent_margin"
-        android:text="@string/parallax_view"
+        android:background="#99CC00"
         android:padding="@dimen/card_padding"
-        android:background="#99CC00"/>
+        android:text="@string/parallax_view"/>
 
 </merge>

@@ -19,7 +19,7 @@ import net.sf.sprockets.widget.GooglePlacesAdapter;
 import java.util.List;
 
 import static android.widget.Toast.LENGTH_LONG;
-import static net.sf.sprockets.google.Places.Request.NEARBY_SEARCH;
+import static net.sf.sprockets.google.Places.URL_NEARBY_SEARCH;
 
 public class GooglePlacesLoaderActivity extends ListActivity
         implements LoaderCallbacks<Response<List<Place>>> {
@@ -40,7 +40,7 @@ public class GooglePlacesLoaderActivity extends ListActivity
 
     @Override
     public Loader<Response<List<Place>>> onCreateLoader(int id, Bundle args) {
-        return new GooglePlacesLoader<>(this, NEARBY_SEARCH, new LocalPlacesParams(this));
+        return new GooglePlacesLoader<>(this, URL_NEARBY_SEARCH, new LocalPlacesParams(this));
     }
 
     @Override

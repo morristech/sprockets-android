@@ -40,7 +40,7 @@ public class EasyCursorLoader extends CursorWrapperLoader<EasyCursor> {
     }
 
     public EasyCursorLoader(Context context, Query q) {
-        this(context, q.uri, q.proj, q.sel, q.args, q.order);
+        this(context, q.uri(), q.proj(), q.sel(), q.args(), q.order());
     }
 
     public EasyCursorLoader(Context context, Uri uri, String[] projection, String selection,

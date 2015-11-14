@@ -30,6 +30,7 @@ import com.google.common.base.Supplier;
 import net.sf.sprockets.app.NavigationDrawerToggle;
 import net.sf.sprockets.view.ActionModePresenter;
 
+import java.util.Collections;
 import java.util.List;
 
 import static android.view.Gravity.START;
@@ -93,11 +94,9 @@ public abstract class NavigationDrawerActivity extends SprocketsActivity impleme
     /**
      * Override to provide any components that should be asked to hide their ActionMode when the
      * navigation drawer is opened.
-     *
-     * @return null when there aren't any ActionModePresenters
      */
     public List<ActionModePresenter> getActionModePresenters() {
-        return null;
+        return Collections.emptyList();
     }
 
     /**

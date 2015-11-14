@@ -3,14 +3,14 @@
 
     <RingtonePreference
         android:key="ringtone"
-        android:title="@string/ringtone"
-        android:ringtoneType="all"/>
+        android:ringtoneType="all"
+        android:title="@string/ringtone"/>
 
     <MultiSelectListPreference
-        android:key="multi"
-        android:title="@string/multi_select"
         android:entries="@array/multi_entries"
-        android:entryValues="@array/multi_values"/>
+        android:entryValues="@array/multi_values"
+        android:key="multi"
+        android:title="@string/multi_select"/>
 
     <EditTextPreference
         android:key="text"

@@ -28,7 +28,8 @@ public class GooglePlaceAutoCompleteActivity extends SprocketsActivity {
             public void onPlaceClick(AdapterView<?> parent, Prediction place, int position) {
                 /* normally do something with the clicked place, but here just toast it */
                 Toast toast = Toast.makeText(GooglePlaceAutoCompleteActivity.this,
-                        getString(R.string.place, place.getName(), place.getTypes()), LENGTH_LONG);
+                        getString(R.string.place, place.getDescription(), place.getTypes()),
+                        LENGTH_LONG);
                 toast.setGravity(CENTER, 0, 0);
                 toast.show();
             }

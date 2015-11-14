@@ -1,3 +1,20 @@
+2015-11-14  3.0.0
+
+	Backwards incompatible changes:
+	* methods returning a Collection or array now return an empty instance instead of null
+	* added content.Content.Query.create, use instead of constructor
+	* added content.DbContentProvider.Sql.create, use instead of constructor
+	* renamed content.DbContentProvider.Sql.notify to notifyUri
+	* refactored content.GooglePlacesLoader for new Places URL_* and FIELD_* constants
+	* removed database.Operation
+	* renamed widget.GooglePlaceAutoComplete.{set,get}PlaceFilter to {set,get}PredictionFilter
+	* removed deprecated widget.GridCard
+	* see also Sprockets for Java 3.0.0 ChangeLog
+
+	Other changes:
+	* added database.Cursors.isActive
+	* added text.style.Spans.foregroundColor
+
 2015-07-07  2.6.0
 
 	* requires Android plug-in for Gradle 1.3.0 or later
