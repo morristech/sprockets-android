@@ -26,22 +26,20 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
 import net.sf.sprockets.gms.location.Locations;
-import net.sf.sprockets.google.Places.Params;
-import net.sf.sprockets.google.Places.Request;
 
 import java.util.concurrent.CountDownLatch;
 
 import static com.google.android.gms.common.ConnectionResult.SUCCESS;
 
 /**
- * Params whose {@link #location(double, double) location} is automatically set to the current
- * location when supplied to one of the {@link Places} methods.
+ * Params whose {@link #latitude() latitude} and {@link #longitude() longitude} are automatically
+ * set to the current location when supplied to one of the {@link Places} methods.
  * <p>
  * Requires the {@link permission#ACCESS_COARSE_LOCATION ACCESS_COARSE_LOCATION} (or
  * {@link permission#ACCESS_FINE_LOCATION FINE}) permission.
  * </p>
  */
-public class LocalPlacesParams extends Params {
+public class LocalPlacesParams extends PlacesParams {
     private static final String TAG = LocalPlacesParams.class.getSimpleName();
 
     private final Context mContext;
@@ -88,11 +86,11 @@ public class LocalPlacesParams extends Params {
     }
 
     /**
-     * Get a URL formatted for the type of request. If {@link #required(boolean) required} is true
-     * (the default), this method will block until a location has been received.
+     * Get the URL with appended parameters. If {@link #required(boolean) required} is true (the
+     * default), this method will block until a location has been received.
      */
     @Override
-    public String format(Request type) {
+    public String format(String url) {
         if (!mRequested) { // only request location once
             mRequested = true;
             int status = mPriority == -1 ? Locations.requestLast(mContext, new Listener())
@@ -105,16 +103,16 @@ public class LocalPlacesParams extends Params {
                 }
             }
         }
-        return super.format(type);
+        return super.format(url);
     }
 
     /**
-     * Sets the location and resumes the request.
+     * Sets the latitude and longitude and then resumes the request.
      */
     private class Listener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-            location(location.getLatitude(), location.getLongitude());
+            latitude(location.getLatitude()).longitude(location.getLongitude());
             mLatch.countDown();
         }
     }

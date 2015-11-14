@@ -21,7 +21,6 @@ import android.Manifest.permission;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,40 +35,44 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 
 import net.sf.sprockets.R;
 import net.sf.sprockets.google.LocalPlacesParams;
-import net.sf.sprockets.google.Place;
 import net.sf.sprockets.google.Place.Prediction;
+import net.sf.sprockets.google.Place.Prediction.IdFilter;
 import net.sf.sprockets.google.Places;
-import net.sf.sprockets.google.Places.Params;
 import net.sf.sprockets.google.Places.Response;
-import net.sf.sprockets.google.Places.Response.Status;
+import net.sf.sprockets.google.PlacesParams;
 import net.sf.sprockets.lang.Substring;
 import net.sf.sprockets.text.style.Spans;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
-import static net.sf.sprockets.google.Places.Response.Status.OK;
-import static net.sf.sprockets.google.Places.Response.Status.ZERO_RESULTS;
+import static net.sf.sprockets.google.Places.Response.STATUS_OK;
+import static net.sf.sprockets.google.Places.Response.STATUS_ZERO_RESULTS;
 
 /**
  * AutoCompleteTextView that provides local suggestions from the
- * <a href="https://developers.google.com/places/" target="_blank">Google Places API</a>.
+ * <a href="https://developers.google.com/places/web-service/"
+ * target="_blank">Google Places API</a>.
  * <p>
  * Requires {@link permission#ACCESS_COARSE_LOCATION ACCESS_COARSE_LOCATION} (or
  * {@link permission#ACCESS_FINE_LOCATION FINE}) and {@link permission#INTERNET INTERNET}
  * permissions.
  * </p>
- * <p>
- * XML Attributes: {@link #setRadius(int) radius}, {@link #setTypes(String) types},
- * {@link #setCountries(String) countries}, {@link #setLanguage(String) language},
- * {@link #setMaxResults(int) maxResults}, {@link #setSuggestionLayout(int) suggestionLayout},
- * {@link #setMatchedSubstringColor(int) matchedSubstringColor}
- * </p>
+ * <p>XML Attributes:</p>
+ * <ul>
+ * <li>{@link #setRadius(int) radius}</li>
+ * <li>{@link #setTypes(String) types}</li>
+ * <li>{@link #setCountries(String) countries}</li>
+ * <li>{@link #setLanguage(String) language}</li>
+ * <li>{@link #setMaxResults(int) maxResults}</li>
+ * <li>{@link #setSuggestionLayout(int) suggestionLayout}</li>
+ * <li>{@link #setMatchedSubstringColor(int) matchedSubstringColor}</li>
+ * </ul>
  * <p>
  * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/google_place_auto_complete.xml"
  * target="_blank">Sample Layout</a>
@@ -80,16 +83,11 @@ import static net.sf.sprockets.google.Places.Response.Status.ZERO_RESULTS;
  * </p>
  */
 public class GooglePlaceAutoComplete extends AutoCompleteTextView {
-    private final Params mParams;
-    private int mRadius;
-    private String mTypes;
-    private String mCountries;
-    private String mLanguage;
-    private Predicate<Place> mFilter;
-    private int mMaxResults;
+    private static final String TAG = GooglePlaceAutoComplete.class.getSimpleName();
+
+    private final PlacesParams mParams;
     private int mLayout;
     private int mColor;
-    private List<ForegroundColorSpan> mColorSpans;
     private OnPlaceClickListener mListener;
 
     public GooglePlaceAutoComplete(Context context) {
@@ -111,7 +109,7 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
         a.recycle();
         /* element attributes */
         a = context.obtainStyledAttributes(attrs, R.styleable.GooglePlaceAutoComplete, defStyle, 0);
-        setRadius(a.getInt(R.styleable.GooglePlaceAutoComplete_radius, 0));
+        setRadius(a.getInt(R.styleable.GooglePlaceAutoComplete_radius, 50000));
         setTypes(a.getString(R.styleable.GooglePlaceAutoComplete_types));
         setCountries(a.getString(R.styleable.GooglePlaceAutoComplete_countries));
         setLanguage(a.getString(R.styleable.GooglePlaceAutoComplete_language));
@@ -130,10 +128,9 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
     // }
 
     /**
-     * Prefer places within this many metres from the current location.
+     * Prefer places within this many metres from the current location. Default value: 50000.
      */
     public GooglePlaceAutoComplete setRadius(int radius) {
-        mRadius = radius;
         mParams.radius(radius);
         return this;
     }
@@ -142,17 +139,18 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      * Get the number of metres within which places will be preferred.
      */
     public int getRadius() {
-        return mRadius;
+        return mParams.radius();
     }
 
     /**
-     * Autocomplete places of this type. Must be one of "geocode", "address", "establishment",
+     * Autocomplete places of the type. Must be one of "geocode", "address", "establishment",
      * "(regions)", or "(cities)".
      */
     public GooglePlaceAutoComplete setTypes(String types) {
-        mTypes = types;
-        mParams.types((String[]) null); // reset list
-        mParams.types(types);
+        mParams.types().clear();
+        if (!Strings.isNullOrEmpty(types)) {
+            mParams.addTypes(types);
+        }
         return this;
     }
 
@@ -160,15 +158,15 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      * Get the type of places that will be autocompleted.
      */
     public String getTypes() {
-        return mTypes;
+        List<String> types = mParams.types();
+        return !types.isEmpty() ? types.get(0) : null;
     }
 
     /**
-     * Autocomplete places in this country. Must be a two character ISO 3166-1 Alpha-2 compatible
+     * Autocomplete places in the country. Must be a two character ISO 3166-1 Alpha-2 compatible
      * country code, e.g. "GB". Currently only one country value is supported.
      */
     public GooglePlaceAutoComplete setCountries(String countries) {
-        mCountries = countries;
         mParams.countries(countries);
         return this;
     }
@@ -177,17 +175,17 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      * Get the country code in which places will be autocompleted.
      */
     public String getCountries() {
-        return mCountries;
+        return mParams.countries();
     }
 
     /**
-     * Return results in this language, if possible. Must be one of the supported language codes.
+     * Return results in the language, if possible. If not specified, the default locale will be
+     * used. Must be one of the supported language codes.
      *
      * @see <a href="https://developers.google.com/maps/faq#languagesupport"
      * target="_blank">Supported Languages</a>
      */
     public GooglePlaceAutoComplete setLanguage(String language) {
-        mLanguage = language;
         mParams.language(language);
         return this;
     }
@@ -196,30 +194,33 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      * Get the language code that results will be returned in.
      */
     public String getLanguage() {
-        return mLanguage;
+        return mParams.language();
     }
 
     /**
      * Only display places for which the filter returns true.
+     *
+     * @see IdFilter
+     * @since 3.0.0
      */
-    public GooglePlaceAutoComplete setPlaceFilter(Predicate<Place> filter) {
-        mFilter = filter;
-        mParams.filter(filter);
+    public GooglePlaceAutoComplete setPredictionFilter(Predicate<Prediction> filter) {
+        mParams.predictionFilter(filter);
         return this;
     }
 
     /**
      * Get the filter that must return true for a place to be displayed.
+     *
+     * @since 3.0.0
      */
-    public Predicate<Place> getPlaceFilter() {
-        return mFilter;
+    public Predicate<Prediction> getPredictionFilter() {
+        return mParams.predictionFilter();
     }
 
     /**
      * Return this many results, at most.
      */
     public GooglePlaceAutoComplete setMaxResults(int maxResults) {
-        mMaxResults = maxResults;
         mParams.maxResults(maxResults);
         return this;
     }
@@ -228,7 +229,7 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      * Get the maximum number of results that will be returned.
      */
     public int getMaxResults() {
-        return mMaxResults;
+        return mParams.maxResults();
     }
 
     /**
@@ -253,7 +254,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      */
     public GooglePlaceAutoComplete setMatchedSubstringColor(int color) {
         mColor = color;
-        mColorSpans = color != 0 ? new ArrayList<ForegroundColorSpan>() : null;
         return this;
     }
 
@@ -262,21 +262,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
      */
     public int getMatchedSubstringColor() {
         return mColor;
-    }
-
-    /**
-     * Get a cached color span.
-     *
-     * @param i starts at zero
-     */
-    private ForegroundColorSpan getColorSpan(int i) {
-        if (i < mColorSpans.size()) {
-            return mColorSpans.get(i);
-        } else {
-            ForegroundColorSpan span = new ForegroundColorSpan(mColor);
-            mColorSpans.add(span);
-            return span;
-        }
     }
 
     /**
@@ -306,9 +291,6 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
     public interface OnPlaceClickListener {
         /**
          * The place at the position in the autocomplete suggestions was clicked.
-         *
-         * @param place with {@link Place#getPlaceId() placeId}, {@link Place#getName() name}, and
-         *              {@link Place#getTypes() types} properties populated
          */
         void onPlaceClick(AdapterView<?> parent, Prediction place, int position);
     }
@@ -347,17 +329,17 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
             Prediction pred = getItem(position);
             SpannableStringBuilder s = (SpannableStringBuilder) view.getTag();
             s.clear();
-            s.append(pred.getName());
+            s.append(pred.getDescription());
             /* highlight matching substrings */
             List<Substring> subs = pred.getMatchedSubstrings();
-            int size = subs.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = 0, size = subs.size(); i < size; i++) {
                 Substring sub = subs.get(i);
                 int start = sub.getOffset();
                 int end = start + sub.getLength();
                 s.setSpan(Spans.bold(i), start, end, SPAN_EXCLUSIVE_EXCLUSIVE);
-                if (mColorSpans != null) {
-                    s.setSpan(getColorSpan(i), start, end, SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (mColor != 0) {
+                    s.setSpan(Spans.foregroundColor(mColor, i), start, end,
+                            SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
             view.setText(s);
@@ -373,9 +355,8 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
          * Sends autocomplete requests to the Google Places API and provides the results.
          */
         private class PlaceFilter extends Filter {
-            private static final String TAG = "PlaceFilter";
-
-            private final Params mParams = new LocalPlacesParams(getContext()).required(false);
+            private final PlacesParams mParams =
+                    new LocalPlacesParams(getContext()).required(false);
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
@@ -384,14 +365,12 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
                     try {
                         Response<List<Prediction>> resp =
                                 Places.autocomplete(mParams.query(constraint.toString()));
-                        Status status = resp.getStatus();
-                        if (status == OK) {
+                        String status = resp.getStatus();
+                        if (STATUS_OK.equals(status)) {
                             List<Prediction> preds = resp.getResult();
                             results.values = preds;
-                            if (preds != null) {
-                                results.count = preds.size();
-                            }
-                        } else if (status != ZERO_RESULTS) {
+                            results.count = preds.size();
+                        } else if (!STATUS_ZERO_RESULTS.equals(status)) {
                             Log.e(TAG, "autocomplete failed: " + status);
                         }
                     } catch (IOException e) {
@@ -410,7 +389,7 @@ public class GooglePlaceAutoComplete extends AutoCompleteTextView {
 
             @Override
             public CharSequence convertResultToString(Object resultValue) {
-                return ((Place) resultValue).getName(); // displayed in TextView after item clicked
+                return ((Prediction) resultValue).getDescription(); // displayed after item clicked
             }
         }
     }
