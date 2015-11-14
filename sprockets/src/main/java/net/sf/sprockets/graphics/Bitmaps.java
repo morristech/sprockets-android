@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2015 pushbit <pushbit@gmail.com>
  * 
  * This file is part of Sprockets.
  * 
@@ -20,26 +20,12 @@ package net.sf.sprockets.graphics;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 
-import java.util.EnumMap;
-
-import static android.graphics.Bitmap.Config.ALPHA_8;
-import static android.graphics.Bitmap.Config.ARGB_4444;
 import static android.graphics.Bitmap.Config.ARGB_8888;
-import static android.graphics.Bitmap.Config.RGB_565;
 
 /**
  * Utility methods for working with Bitmaps.
  */
 public class Bitmaps {
-    private static final EnumMap<Config, Integer> bytes = new EnumMap<>(Config.class);
-
-    static {
-        bytes.put(ALPHA_8, 1);
-        bytes.put(ARGB_4444, 2);
-        bytes.put(ARGB_8888, 4);
-        bytes.put(RGB_565, 2);
-    }
-
     private Bitmaps() {
     }
 
@@ -56,7 +42,22 @@ public class Bitmaps {
      * storage config.
      */
     public static int getByteCount(int width, int height, Config config) {
-        return width * height * bytes.get(config);
+        int bytes = 0;
+        switch (config) {
+            case ALPHA_8:
+                bytes = 1;
+                break;
+            case RGB_565:
+                bytes = 2;
+                break;
+            case ARGB_4444:
+                bytes = 2;
+                break;
+            case ARGB_8888:
+                bytes = 4;
+                break;
+        }
+        return width * height * bytes;
     }
 
     /**
