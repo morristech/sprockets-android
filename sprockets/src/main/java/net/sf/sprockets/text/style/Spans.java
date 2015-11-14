@@ -18,7 +18,10 @@
 package net.sf.sprockets.text.style;
 
 import android.graphics.Typeface;
+import android.support.annotation.ColorInt;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,7 @@ public class Spans {
     public static final StyleSpan ITALIC = new StyleSpan(Typeface.ITALIC);
     public static final StyleSpan BOLD_ITALIC = new StyleSpan(Typeface.BOLD_ITALIC);
     private static List<StyleSpan> sBolds;
+    private static SparseArray<List<ForegroundColorSpan>> sForeColors;
 
     private Spans() {
     }
@@ -54,6 +58,30 @@ public class Spans {
             StyleSpan bold = new StyleSpan(Typeface.BOLD);
             sBolds.add(bold);
             return bold;
+        }
+    }
+
+    /**
+     * Get a cached foreground color span.
+     *
+     * @param i starts at zero
+     * @since 3.0.0
+     */
+    public static ForegroundColorSpan foregroundColor(@ColorInt int color, int i) {
+        if (sForeColors == null) {
+            sForeColors = new SparseArray<>();
+        }
+        List<ForegroundColorSpan> spans = sForeColors.get(color);
+        if (spans == null) {
+            spans = new ArrayList<>();
+            sForeColors.put(color, spans);
+        }
+        if (i < spans.size()) {
+            return spans.get(i);
+        } else {
+            ForegroundColorSpan span = new ForegroundColorSpan(color);
+            spans.add(span);
+            return span;
         }
     }
 }
