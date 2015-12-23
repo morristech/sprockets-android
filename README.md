@@ -57,9 +57,21 @@ Install
     compile 'net.sf.sprockets:sprockets-android:3.0.0'
 ```
 
-2\. *(Optional)* Add `minifyEnabled true` to all `buildTypes`.  Requires Android plug-in for Gradle 1.3.0+.
+2\. Add `minifyEnabled true` to all `buildTypes`.
 
-3\. *(Optional)* Download [sprockets.xml][11] to `{app}/src/main/resources/` and add your [Google API key][12].
+3\. Add `packagingOptions` to exclude duplicate files.
+
+```groovy
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+```
+
+4\. *(Optional)* Download [sprockets.xml][11] to `{app}/src/main/resources/` and add your [Google API key][12].
 
 Notes
 -----
