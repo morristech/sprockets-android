@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 pushbit <pushbit@gmail.com>
+ * Copyright 2015-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -22,8 +22,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Shader;
 import android.graphics.drawable.GradientDrawable.Orientation;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.FloatRange;
 import android.util.Log;
 
 import com.google.common.base.MoreObjects;
@@ -52,34 +54,34 @@ public class GradientTransformation implements Transformation {
     private final float[] mPositions;
 
     /**
-     * Use the default colors and positions. The first half of the overlay will be
-     * {@code R.color.overlay}. The second half will fade from {@code overlay} to transparent.
+     * Use the default colors and positions. The first half of the overlay will be dark and
+     * transparent. The second half will fade from dark and transparent to completely transparent.
      */
     public GradientTransformation(Context context, Orientation orientation) {
         this(orientation, sDefColors, sDefPositions);
         if (sDefColors[0] == TRANSPARENT) {
-            sDefColors[0] = context.getResources().getColor(R.color.overlay);
+            sDefColors[0] = context.getResources().getColor(R.color.text_protection);
         }
     }
 
     /**
-     * Use the color and default positions. The first half of the overlay will be the color. The
-     * second half will fade from the color to transparent.
+     * Use the color resource and default positions. The first half of the overlay will be the
+     * color. The second half will fade from the color to transparent.
      *
      * @since 2.4.0
      */
-    public GradientTransformation(Context context, Orientation orientation, int colorResId) {
-        this(orientation, new int[]{context.getResources().getColor(colorResId), TRANSPARENT},
+    public GradientTransformation(Context context, Orientation orientation, @ColorRes int colorId) {
+        this(orientation, new int[]{context.getResources().getColor(colorId), TRANSPARENT},
                 sDefPositions);
     }
 
     /**
      * Apply a gradient of the colors at the positions in the direction of the orientation.
      *
-     * @see LinearGradient#LinearGradient(float, float, float, float, int[], float[],
-     * Shader.TileMode)
+     * @see LinearGradient
      */
-    public GradientTransformation(Orientation orientation, int[] colors, float[] positions) {
+    public GradientTransformation(Orientation orientation, @ColorInt int[] colors,
+                                  @FloatRange(from = 0.0, to = 1.0) float[] positions) {
         mOrient = orientation;
         mColors = colors;
         mPositions = positions;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 pushbit <pushbit@gmail.com>
+ * Copyright 2015-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -17,45 +17,17 @@
 
 package net.sf.sprockets.graphics;
 
-import android.support.v7.graphics.Palette;
-import android.support.v7.graphics.Palette.Builder;
-import android.support.v7.graphics.Palette.Swatch;
-
-import java.util.List;
-
 /**
- * Utility methods for working with Palettes.
+ * Constants for working with Palettes.
  *
  * @since 2.1.0
  */
 public class Palettes {
     /**
-     * Maximum number of colors to use when {@link Builder#maximumColorCount(int) generating} a
-     * Palette.
+     * Maximum number of colors to use when generating a Palette.
      */
     public static final int MAX_COLORS = 24;
 
     private Palettes() {
-    }
-
-    /**
-     * Get the Swatch in the Palette that has the highest {@link Swatch#getPopulation() population}.
-     *
-     * @return null if the Palette doesn't have any Swatches
-     */
-    public static Swatch getMostPopulousSwatch(Palette palette) {
-        int highestPop = 0;
-        Swatch mostPopulous = null;
-        List<Swatch> swatches = palette.getSwatches();
-        int size = swatches.size();
-        for (int i = 0; i < size; i++) {
-            Swatch swatch = swatches.get(i);
-            int pop = swatch.getPopulation();
-            if (pop > highestPop) {
-                highestPop = pop;
-                mostPopulous = swatch;
-            }
-        }
-        return mostPopulous;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2016 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -18,18 +18,21 @@
 package net.sf.sprockets.graphics;
 
 import android.graphics.Color;
+import android.support.annotation.ColorInt;
 
-import java.util.Random;
+import org.apache.commons.lang3.RandomUtils;
 
 /**
  * Utility methods for working with colors.
  */
 public class Colors {
-    private static final Random sRandom = new Random();
-    private static final int FULL = 256;
-    private static final int HALF = FULL / 2;
-    private static final int QUARTER = HALF / 2;
-    private static final int EIGHTH = QUARTER / 2;
+    /* gamma encoded N/6*3(R+G+B) segments (((256÷6×N)÷255)^(1÷2.222222))×255 */
+    private static final int SIX = 765;
+    private static final int FIVE = 705;
+    private static final int FOUR = 639;
+    private static final int THREE = 561;
+    private static final int TWO = 468;
+    private static final int ONE = 342;
 
     private Colors() {
     }
@@ -37,74 +40,78 @@ public class Colors {
     /**
      * Get a random color.
      */
+    @ColorInt
     public static int random() {
-        return color(FULL, 0);
+        return between(0, SIX);
     }
 
     /**
-     * Get a random color from the lighter half.
+     * Get a random color from the darkest sixth.
      */
-    public static int light() {
-        return light(HALF);
-    }
-
-    /**
-     * Get a random color from the lightest quarter.
-     */
-    public static int lighter() {
-        return light(QUARTER);
-    }
-
-    /**
-     * Get a random color from the lightest eighth.
-     */
-    public static int lightest() {
-        return light(EIGHTH);
-    }
-
-    /**
-     * Get a random color from the top lightest.
-     */
-    private static int light(int top) {
-        return color(top, FULL - top);
-    }
-
-    /**
-     * Get a random color from the darker half.
-     */
-    public static int dark() {
-        return dark(HALF);
-    }
-
-    /**
-     * Get a random color from the darkest quarter.
-     */
-    public static int darker() {
-        return dark(QUARTER);
-    }
-
-    /**
-     * Get a random color from the darkest eighth.
-     */
+    @ColorInt
     public static int darkest() {
-        return dark(EIGHTH);
+        return between(0, ONE);
     }
 
     /**
-     * Get a random color from the bottom darkest.
+     * Get a random color from the middle darker.
      */
-    private static int dark(int bottom) {
-        return color(bottom, 0);
+    @ColorInt
+    public static int darker() {
+        return between(ONE, TWO);
     }
 
     /**
-     * Get a color with variance between 0 (inclusive) and the max (exclusive) above the base.
+     * Get a random color from the lightest dark.
      */
-    private static int color(int max, int base) {
-        return Color.rgb(random(max, base), random(max, base), random(max, base));
+    @ColorInt
+    public static int dark() {
+        return between(TWO, THREE);
     }
 
-    private static int random(int max, int base) {
-        return sRandom.nextInt(max) + base;
+    /**
+     * Get a random color from the darkest light.
+     */
+    @ColorInt
+    public static int light() {
+        return between(THREE, FOUR);
+    }
+
+    /**
+     * Get a random color from the middle lighter.
+     */
+    @ColorInt
+    public static int lighter() {
+        return between(FOUR, FIVE);
+    }
+
+    /**
+     * Get a random color from the lightest sixth.
+     */
+    @ColorInt
+    public static int lightest() {
+        return between(FIVE, SIX);
+    }
+
+    private static int between(int min, int max) {
+        /* create three color components that will add up to be between the min and max */
+        int a = RandomUtils.nextInt(Math.max(min - 510, 0), 256); // with light colors each has min
+        int b = RandomUtils.nextInt(Math.max(min - a - 255, 0), Math.min(max - a, 255) + 1);
+        int c = RandomUtils.nextInt(Math.max(min - a - b, 0), Math.min(max - (a + b), 255) + 1);
+        switch (RandomUtils.nextInt(0, 6)) { // mix 'em up and make a color out of them
+            case 0:
+                return Color.rgb(a, b, c);
+            case 1:
+                return Color.rgb(a, c, b);
+            case 2:
+                return Color.rgb(b, a, c);
+            case 3:
+                return Color.rgb(c, a, b);
+            case 4:
+                return Color.rgb(b, c, a);
+            case 5:
+                return Color.rgb(c, b, a);
+        }
+        throw new RuntimeException("Random.nextInt(n) returned something other than [0,n)?!");
     }
 }

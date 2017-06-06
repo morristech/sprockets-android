@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/page"
-          style="@style/Card.Title.Light"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:gravity="top|center"
-          android:padding="@dimen/page_number_padding"/>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/page"
+        style="@android:style/TextAppearance.Material.Medium.Inverse"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top|center"
+        android:padding="@dimen/touch_target_min_size"/>
+
+</layout>

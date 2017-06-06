@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="group_margin_vertical">32dp</dimen>
+    <dimen name="member_margin_vertical">16dp</dimen>
+    <dimen name="detail_margin_vertical">8dp</dimen>
+</resources>

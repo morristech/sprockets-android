@@ -5,4 +5,4 @@
           class="net.sf.sprockets.app.ui.SprocketsPreferenceFragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          app:preferences="@xml/preferences"/>
+          app:sprockets_preferences="@xml/preferences"/>

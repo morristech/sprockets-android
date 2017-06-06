@@ -1,58 +1,107 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'maven'
+apply plugin: 'me.tatarka.retrolambda'
 
 def libName = 'Sprockets Android'
-def libVersionCode = 8
-def libVersionName = '3.0.0'
+def libVersionCode = 4_000_000
+def libVersionName = '4.0.0'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
     defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 25
         versionCode libVersionCode
         versionName libVersionName
-        minSdkVersion 16
-        targetSdkVersion 22
         consumerProguardFiles 'proguard-rules.pro'
+        multiDexEnabled true
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+    dataBinding {
+        enabled true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST' // objenesis, commons-primitives
     }
 }
 
-configurations {
-    javadoc
+dependencies {
+    def supportLibraryVersion = '25.3.1'
+    def playServicesVersion = '10.2.6'
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile "com.android.support:design:$supportLibraryVersion"
+    compile "com.android.support:support-v13:$supportLibraryVersion"
+    provided 'com.firebaseui:firebase-ui-auth:1.2.0' // change to compile when fabric repo gone
+    compile "com.google.android.gms:play-services-location:$playServicesVersion"
+    compile "com.google.android.gms:play-services-places:$playServicesVersion"
+    compile 'com.google.dagger:dagger-android:2.11'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    provided 'com.google.errorprone:error_prone_annotations:2.0.19'
+    compile "com.google.firebase:firebase-auth:$playServicesVersion"
+    compile "com.google.firebase:firebase-config:$playServicesVersion"
+    compile "com.google.firebase:firebase-crash:$playServicesVersion"
+    compile "com.google.firebase:firebase-perf:$playServicesVersion"
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'io.realm:android-adapters:2.1.0'
+    provided 'io.realm:realm-android-library:3.3.1' // don't force big jni libs on client
+    compile 'jp.wasabeef:picasso-transformations:2.1.2'
+    compile 'net.sf.sprockets:sprockets:4.0.0'
+    compile 'org.apache.commons:commons-collections4:4.1'
+    provided 'org.immutables:value:2.5.2'
+    compile 'pub.devrel:easypermissions:0.4.0'
+    androidTestCompile project(':sprockets-test')
+    androidTestCompile 'com.firebaseui:firebase-ui-auth:1.2.0' // only provided above (for now)
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:palette-v7:23.1.1'
-    compile 'com.android.support:support-v13:23.1.1'
-    compile 'com.github.frankiesardo:icepick:2.3.6'
-    compile 'com.github.frankiesardo:icepick-processor:2.3.6'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    compile 'com.google.android.gms:play-services-location:8.3.0'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'commons-io:commons-io:2.4'
-    compile 'net.sf.sprockets:sprockets:3.0.0'
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
 
-    /* Google repository dependencies aren't visible in configs, use external jars instead */
-    def extras = "${android.sdkDirectory}/extras"
-    javadoc fileTree(dir: "${extras}/android/support", include: ['**/*.jar'])
-    javadoc fileTree(dir: "${extras}/google/google_play_services/libproject", include: ['**/*.jar'])
+task androidJavadocs(type: Javadoc, dependsOn: 'compileReleaseJavaWithJavac') {
+    def apt = "${buildDir}/generated/source/apt/release/net/sf/sprockets"
+    source = android.sourceSets.main.java.srcDirs
+            .plus(fileTree(dir: apt, include: ['**/Mutable*.java']))
+    classpath += files(android.bootClasspath, configurations.compile, configurations.provided,
+            fileTree(dir: "${android.sdkDirectory}/extras", include: ['**/classes.jar']))
+    title = "${libName} ${libVersionName} API"
+    options {
+        links 'http://reactivex.io/RxJava/2.x/javadoc/', 'https://developer.android.com/reference/',
+                'https://docs.oracle.com/javaee/7/api/', 'https://realm.io/docs/java/latest/api/',
+                'https://square.github.io/picasso/2.x/picasso/'
+        linksOffline 'https://developers.google.com/android/reference/',
+                "${android.sdkDirectory}/extras/google/google_play_services/docs/reference"
+    }
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+artifacts {
+    archives androidSourcesJar, androidJavadocsJar
 }
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file://${buildDir}/repo/")
+            repository(url: "file://${System.properties['user.home']}/.m2/repository/")
             pom.project {
                 groupId 'net.sf.sprockets'
                 artifactId 'sprockets-android'
                 version libVersionName
                 packaging 'aar'
                 name libName
-                description 'Android base components, widgets, and utility methods.'
+                description 'Android base components, widgets, and utility methods'
                 url 'https://pushbit.github.io/sprockets-android'
                 licenses {
                     license {
@@ -79,41 +128,4 @@ uploadArchives {
             }
         }
     }
-}
-
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-}
-
-task androidJavadocs(type: Javadoc, dependsOn: 'compileReleaseJavaWithJavac') {
-    source = android.sourceSets.main.java.srcDirs
-            .plus(fileTree(dir: "${buildDir}/generated/source/r/release"))
-            .plus(fileTree(dir: "${buildDir}/generated/source/apt/release"))
-            .plus(fileTree(dir: '../../sprockets/src/main/java'))
-            .plus(fileTree(dir: '../../sprockets/target/generated-sources/annotations'))
-    classpath += files(android.bootClasspath, configurations.compile, configurations.javadoc)
-    title = "${libName} ${libVersionName} API"
-    options {
-        links 'http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/',
-                'https://commons.apache.org/proper/commons-configuration/javadocs/v1.10/apidocs/',
-                'https://commons.apache.org/proper/commons-primitives/apidocs/',
-                'https://jakewharton.github.io/butterknife/javadoc/',
-                'https://square.github.io/picasso/2.x/picasso/',
-                'https://square.github.io/retrofit/1.x/retrofit/'
-        linksOffline 'https://developer.android.com/reference/',
-                "${android.sdkDirectory}/docs/reference"
-        linksOffline 'https://developers.google.com/android/reference/',
-                "${android.sdkDirectory}/extras/google/google_play_services/docs/reference"
-        stylesheetFile file('src/main/javadoc/stylesheet.css')
-    }
-}
-
-task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-    classifier = 'javadoc'
-    from androidJavadocs.destinationDir
-}
-
-artifacts {
-    archives androidSourcesJar, androidJavadocsJar
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -21,11 +21,12 @@ import android.content.Context;
 import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.database.CursorWrapper;
+import android.support.annotation.Nullable;
 
 import net.sf.sprockets.content.Content.Query;
 
 /**
- * Cursor with additional methods that can simplify interaction.
+ * Cursor with additional methods which can simplify interaction.
  */
 public class EasyCursor extends CursorWrapper {
     private Object mTag;
@@ -140,6 +141,17 @@ public class EasyCursor extends CursorWrapper {
     }
 
     /**
+     * Returns the value of the requested column as a boolean.
+     *
+     * @return true if the value is not zero
+     * @throws IllegalArgumentException if the column does not exist
+     * @since 4.0.0
+     */
+    public boolean getBoolean(String columnName) {
+        return getLong(getColumnIndexOrThrow(columnName)) != 0;
+    }
+
+    /**
      * Store related data.
      *
      * @since 2.5.0
@@ -154,6 +166,8 @@ public class EasyCursor extends CursorWrapper {
      *
      * @since 2.5.0
      */
+    @Nullable
+    @SuppressWarnings("unchecked")
     public <T> T getTag() {
         return (T) mTag;
     }

@@ -27,18 +27,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Instances of Spans.
+ * Utility methods for working with Spans.
  *
  * @since 2.1.0
  */
 public class Spans {
-    public static final StyleSpan BOLD = new StyleSpan(Typeface.BOLD);
-    public static final StyleSpan ITALIC = new StyleSpan(Typeface.ITALIC);
-    public static final StyleSpan BOLD_ITALIC = new StyleSpan(Typeface.BOLD_ITALIC);
+    private static StyleSpan sBold;
+    private static StyleSpan sItalic;
+    private static StyleSpan sBoldItalic;
     private static List<StyleSpan> sBolds;
     private static SparseArray<List<ForegroundColorSpan>> sForeColors;
 
     private Spans() {
+    }
+
+    /**
+     * Get a cached bold span.
+     *
+     * @since 4.0.0
+     */
+    public static StyleSpan bold() {
+        if (sBold == null) {
+            sBold = new StyleSpan(Typeface.BOLD);
+        }
+        return sBold;
+    }
+
+    /**
+     * Get a cached italic span.
+     *
+     * @since 4.0.0
+     */
+    public static StyleSpan italic() {
+        if (sItalic == null) {
+            sItalic = new StyleSpan(Typeface.ITALIC);
+        }
+        return sItalic;
+    }
+
+    /**
+     * Get a cached bold italic span.
+     *
+     * @since 4.0.0
+     */
+    public static StyleSpan boldItalic() {
+        if (sBoldItalic == null) {
+            sBoldItalic = new StyleSpan(Typeface.BOLD_ITALIC);
+        }
+        return sBoldItalic;
     }
 
     /**
@@ -50,7 +86,7 @@ public class Spans {
     public static StyleSpan bold(int i) {
         if (sBolds == null) {
             sBolds = new ArrayList<>();
-            sBolds.add(BOLD);
+            sBolds.add(bold());
         }
         if (i < sBolds.size()) {
             return sBolds.get(i);

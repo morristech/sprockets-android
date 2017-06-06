@@ -1,16 +1,16 @@
 /*
- * Copyright 2014-2015 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,6 +21,7 @@ import android.util.LongSparseArray;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
+import android.util.SparseLongArray;
 
 import org.apache.commons.collections.primitives.ArrayIntList;
 
@@ -38,45 +39,29 @@ public class SparseArrays {
      * Get the keys of the SparseArray.
      */
     public static int[] keys(SparseArray<?> array) {
-        int[] keys = new int[array.size()];
-        for (int i = 0; i < keys.length; i++) {
-            keys[i] = array.keyAt(i);
-        }
-        return keys;
+        return (int[]) keys(array, null, null, null, null);
     }
 
     /**
      * Get the values of the SparseArray.
      */
+    @SuppressWarnings("unchecked")
     public static <E> List<E> values(SparseArray<E> array) {
-        int size = array.size();
-        List<E> vals = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            vals.add(array.valueAt(i));
-        }
-        return vals;
+        return (List<E>) values(array, null, null, null, null);
     }
 
     /**
      * Get the keys of the SparseBooleanArray.
      */
     public static int[] keys(SparseBooleanArray array) {
-        int[] keys = new int[array.size()];
-        for (int i = 0; i < keys.length; i++) {
-            keys[i] = array.keyAt(i);
-        }
-        return keys;
+        return (int[]) keys(null, array, null, null, null);
     }
 
     /**
      * Get the values of the SparseBooleanArray.
      */
     public static boolean[] values(SparseBooleanArray array) {
-        boolean[] vals = new boolean[array.size()];
-        for (int i = 0; i < vals.length; i++) {
-            vals[i] = array.valueAt(i);
-        }
-        return vals;
+        return (boolean[]) values(null, array, null, null, null);
     }
 
     /**
@@ -93,9 +78,6 @@ public class SparseArrays {
         return keys(array, false);
     }
 
-    /**
-     * Get the keys of the SparseBooleanArray which have the value.
-     */
     private static int[] keys(SparseBooleanArray array, boolean value) {
         int size = array.size();
         ArrayIntList keys = new ArrayIntList(size);
@@ -125,14 +107,8 @@ public class SparseArrays {
         return firstKey(array, false);
     }
 
-    /**
-     * Get the first key of the SparseBooleanArray which has the value.
-     *
-     * @return {@link Integer#MIN_VALUE} if the value is not found
-     */
     private static int firstKey(SparseBooleanArray array, boolean value) {
-        int size = array.size();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0, size = array.size(); i < size; i++) {
             if (array.valueAt(i) == value) {
                 return array.keyAt(i);
             }
@@ -144,44 +120,85 @@ public class SparseArrays {
      * Get the keys of the SparseIntArray.
      */
     public static int[] keys(SparseIntArray array) {
-        int[] keys = new int[array.size()];
-        for (int i = 0; i < keys.length; i++) {
-            keys[i] = array.keyAt(i);
-        }
-        return keys;
+        return (int[]) keys(null, null, array, null, null);
     }
 
     /**
      * Get the values of the SparseIntArray.
      */
     public static int[] values(SparseIntArray array) {
-        int[] vals = new int[array.size()];
-        for (int i = 0; i < vals.length; i++) {
-            vals[i] = array.valueAt(i);
-        }
-        return vals;
+        return (int[]) values(null, null, array, null, null);
+    }
+
+    /**
+     * Get the keys of the SparseLongArray.
+     */
+    public static int[] keys(SparseLongArray array) {
+        return (int[]) keys(null, null, null, array, null);
+    }
+
+    /**
+     * Get the values of the SparseLongArray.
+     */
+    public static long[] values(SparseLongArray array) {
+        return (long[]) values(null, null, null, array, null);
     }
 
     /**
      * Get the keys of the LongSparseArray.
      */
     public static long[] keys(LongSparseArray<?> array) {
-        long[] keys = new long[array.size()];
-        for (int i = 0; i < keys.length; i++) {
-            keys[i] = array.keyAt(i);
-        }
-        return keys;
+        return (long[]) keys(null, null, null, null, array);
     }
 
     /**
      * Get the values of the LongSparseArray.
      */
+    @SuppressWarnings("unchecked")
     public static <E> List<E> values(LongSparseArray<E> array) {
-        int size = array.size();
-        List<E> vals = new ArrayList<>(size);
+        return (List<E>) values(null, null, null, null, array);
+    }
+
+    private static Object keys(SparseArray<?> a, SparseBooleanArray b, SparseIntArray c,
+                               SparseLongArray d, LongSparseArray<?> e) {
+        int size = size(a, b, c, d, e);
+        int[] ints = a != null || b != null || c != null || d != null ? new int[size] : null;
+        long[] longs = e != null ? new long[size] : null;
         for (int i = 0; i < size; i++) {
-            vals.add(array.valueAt(i));
+            if (ints != null) {
+                ints[i] = a != null ? a.keyAt(i)
+                        : b != null ? b.keyAt(i) : c != null ? c.keyAt(i) : d.keyAt(i);
+            } else if (longs != null) {
+                longs[i] = e.keyAt(i);
+            }
         }
-        return vals;
+        return ints != null ? ints : longs;
+    }
+
+    private static <E> Object values(SparseArray<E> a, SparseBooleanArray b, SparseIntArray c,
+                                     SparseLongArray d, LongSparseArray<E> e) {
+        int size = size(a, b, c, d, e);
+        ArrayList<E> vals = a != null || e != null ? new ArrayList<>(size) : null;
+        boolean[] bools = b != null ? new boolean[size] : null;
+        int[] ints = c != null ? new int[size] : null;
+        long[] longs = d != null ? new long[size] : null;
+        for (int i = 0; i < size; i++) {
+            if (vals != null) {
+                vals.add(a != null ? a.valueAt(i) : e.valueAt(i));
+            } else if (bools != null) {
+                bools[i] = b.valueAt(i);
+            } else if (ints != null) {
+                ints[i] = c.valueAt(i);
+            } else if (longs != null) {
+                longs[i] = d.valueAt(i);
+            }
+        }
+        return vals != null ? vals : bools != null ? bools : ints != null ? ints : longs;
+    }
+
+    private static int size(SparseArray<?> a, SparseBooleanArray b, SparseIntArray c,
+                            SparseLongArray d, LongSparseArray<?> e) {
+        return a != null ? a.size()
+                : b != null ? b.size() : c != null ? c.size() : d != null ? d.size() : e.size();
     }
 }

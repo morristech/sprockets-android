@@ -1,41 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="match_parent">-1px</dimen>
-    <dimen name="wrap_content">-2px</dimen>
-    <dimen name="action_bar_list_subtitle_top_margin">-3dp</dimen>
-    <dimen name="icon">32dp</dimen>
-    <dimen name="navigation_drawer_item_min_height">64dp</dimen>
-    <dimen name="navigation_drawer_item_text">21sp</dimen>
-    <dimen name="navigation_drawer_sub_item_text">13sp</dimen>
-    <dimen name="divider_height">1dp</dimen>
-    <dimen name="pane_max_width">@dimen/match_parent</dimen>
-    <dimen name="cards_pane_margin">16dp</dimen>
-    <dimen name="cards_parent_margin">8dp</dimen>
-    <dimen name="cards_sibling_margin">8dp</dimen>
-    <dimen name="card_corner">1dp</dimen>
-    <dimen name="card_shadow">2dp</dimen>
-    <dimen name="card_padding">16dp</dimen>
-    <!-- Extra padding to accommodate for the shadow. -->
-    <dimen name="card_padding_bottom">18dp</dimen>
-    <dimen name="header_card_shadow">1dp</dimen>
-    <dimen name="header_card_padding_bottom">17dp</dimen>
-    <dimen name="text_card_max_width">@dimen/match_parent</dimen>
-    <!-- Fills two columns in small widths (320dp) -->
-    <dimen name="grid_column_width">159dp</dimen>
-    <dimen name="grid_row_height">112dp</dimen>
-    <dimen name="grid_spacing">4dp</dimen>
-    <dimen name="grid_spacing_small">1dp</dimen>
-    <dimen name="min_touch_size">48dp</dimen>
-    <dimen name="padding_large">16dp</dimen>
-    <dimen name="padding_medium">12dp</dimen>
-    <dimen name="padding">8dp</dimen>
-    <dimen name="padding_small">4dp</dimen>
-    <dimen name="padding_tiny">2dp</dimen>
-    <!-- Comfortable vertical spacing between title and text TextViews. -->
-    <dimen name="text_margin">4dp</dimen>
-
-    <dimen name="text_large">25sp</dimen>
-    <dimen name="text_medium">18sp</dimen>
-    <dimen name="text_small">14sp</dimen>
-    <dimen name="text_tiny">10sp</dimen>
+    <!-- outer window -->
+    <dimen name="sprockets_status_bar_height">24dp</dimen>
+    <dimen name="contentInset">@dimen/abc_action_bar_content_inset_material</dimen>
+    <dimen name="contentInsetStartWithNavigation">
+        @dimen/abc_action_bar_content_inset_with_nav
+    </dimen>
+    <!-- view margins -->
+    <dimen name="group_margin">16dp</dimen>
+    <dimen name="group_margin_horizontal">16dp</dimen>
+    <dimen name="group_margin_vertical">16dp</dimen>
+    <dimen name="member_margin">8dp</dimen>
+    <dimen name="member_margin_horizontal">8dp</dimen>
+    <dimen name="member_margin_vertical">8dp</dimen>
+    <dimen name="detail_margin">4dp</dimen>
+    <dimen name="detail_margin_horizontal">4dp</dimen>
+    <dimen name="detail_margin_vertical">4dp</dimen>
+    <!-- lists -->
+    <dimen name="list_item_height">72dp</dimen>
+    <dimen name="list_item_margin">1dp</dimen>
+    <dimen name="grid_item_size">144dp</dimen>
+    <!-- misc. -->
+    <dimen name="touch_target_min_size">48dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="sprockets_avatar_size">56dp</dimen>
 </resources>

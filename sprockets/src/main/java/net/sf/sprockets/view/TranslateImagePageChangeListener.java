@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import net.sf.sprockets.widget.ObservableImageView;
-import net.sf.sprockets.widget.ObservableImageView.ImageViewObserver;
 
 import static android.widget.ImageView.ScaleType.MATRIX;
 
@@ -43,17 +42,10 @@ import static android.widget.ImageView.ScaleType.MATRIX;
  * Drawable. This can be done automatically by using an {@link ObservableImageView} or manually by
  * calling {@link #onDrawableChanged()}.
  * </p>
- * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/TranslateImageActivity.java" target="_blank">Sample Usage</a>
- * </p>
- * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/res/layout/translate_image.xml" target="_blank">Sample Layout</a>
- * </p>
  *
  * @since 2.1.0
  */
-public class TranslateImagePageChangeListener extends SimpleOnPageChangeListener
-        implements ImageViewObserver {
+public class TranslateImagePageChangeListener extends SimpleOnPageChangeListener {
     private final ViewPager mPager;
     private PagerAdapter mAdapter;
     private final AdapterObserver mObserver = new AdapterObserver();
@@ -66,6 +58,7 @@ public class TranslateImagePageChangeListener extends SimpleOnPageChangeListener
     private final Matrix mMatrix = new Matrix();
     private float mScale;
     private int mPageCount;
+
     /**
      * Number of pixels to translate the image per page.
      */
@@ -76,15 +69,23 @@ public class TranslateImagePageChangeListener extends SimpleOnPageChangeListener
      * Scale the ImageView's Drawable and translate it when the ViewPager is scrolled.
      *
      * @param view can be an {@link ObservableImageView} and it will be automatically updated when
-     *             the Drawable source changes, otherwise you must call {@link #onDrawableChanged()}
-     *             when the Drawable source changes
+     *             the Drawable source changes, otherwise you must call
+     *             {@link #onDrawableChanged()} when the Drawable source changes
      */
     public TranslateImagePageChangeListener(ViewPager pager, ImageView view) {
         mPager = pager;
         mView = view;
         if (view instanceof ObservableImageView) {
-            ((ObservableImageView) view).registerObserver(this);
+            ((ObservableImageView) view).addObserver((o, arg) -> onDrawableChanged());
         }
+    }
+
+    /**
+     * Scale and translate the new Drawable.
+     */
+    public void onDrawableChanged() {
+        checkDrawable();
+        updateMatrix(mPager.getCurrentItem(), 0.0f);
     }
 
     @Override
@@ -159,12 +160,6 @@ public class TranslateImagePageChangeListener extends SimpleOnPageChangeListener
             mView.setScaleType(MATRIX);
             mView.setImageMatrix(mMatrix);
         }
-    }
-
-    @Override
-    public void onDrawableChanged() {
-        checkDrawable();
-        updateMatrix(mPager.getCurrentItem(), 0.0f);
     }
 
     /**

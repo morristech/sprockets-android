@@ -20,17 +20,15 @@ package net.sf.sprockets.content;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
+import net.sf.sprockets.database.Cursors;
+import net.sf.sprockets.immutables.value.NamedMutable;
 import net.sf.sprockets.util.Elements;
 
-import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Modifiable;
-import org.immutables.value.Value.Style;
-
-import javax.annotation.Nullable;
 
 import static android.content.ContentResolver.SYNC_EXTRAS_EXPEDITED;
 import static android.content.ContentResolver.SYNC_EXTRAS_MANUAL;
@@ -83,17 +81,12 @@ public class Content {
     /**
      * Get the number of rows at the URI.
      *
+     * @return {@link Integer#MIN_VALUE} if the URI could not be queried
      * @since 2.3.0
      */
     public static int getCount(Context context, Uri uri) {
-        int rows = 0;
         String[] proj = {"COUNT(*)"};
-        Cursor c = context.getContentResolver().query(uri, proj, null, null, null);
-        if (c.moveToFirst()) {
-            rows = c.getInt(0);
-        }
-        c.close();
-        return rows;
+        return Cursors.firstInt(context.getContentResolver().query(uri, proj, null, null, null));
     }
 
     /**
@@ -109,10 +102,9 @@ public class Content {
     /**
      * Request that a sync starts immediately.
      *
-     * @param extras can be null
      * @see ContentResolver#requestSync(Account, String, Bundle)
      */
-    public static void requestSyncNow(Account account, String authority, Bundle extras) {
+    public static void requestSyncNow(Account account, String authority, @Nullable Bundle extras) {
         if (extras == null) {
             extras = new Bundle();
         }
@@ -133,8 +125,8 @@ public class Content {
      * @since 2.3.0
      */
     @Modifiable
-    @Style(typeModifiable = "Mutable*", create = "new", get = "*", set = "*")
-    public static abstract class Query {
+    @NamedMutable
+    public abstract static class Query {
         Query() {
         }
 
@@ -149,18 +141,25 @@ public class Content {
 
         public abstract Uri uri();
 
-        @Default
-        public String[] proj() { // to be @Nullable and abstract when Immutables supports varargs
-            return null;
+        public abstract MutableQuery uri(Uri uri);
+
+        /**
+         * Parse the URI.
+         *
+         * @since 4.0.0
+         */
+        public MutableQuery uri(String uri) {
+            return uri(Uri.parse(uri));
         }
+
+        @Nullable
+        public abstract String[] proj();
 
         @Nullable
         public abstract String sel();
 
-        @Default
-        public String[] args() { // same as proj() above
-            return null;
-        }
+        @Nullable
+        public abstract String[] args();
 
         public abstract MutableQuery args(String... args);
 

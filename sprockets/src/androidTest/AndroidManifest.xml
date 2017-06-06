@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="net.sf.sprockets">
+
+    <application android:theme="@style/Theme.AppCompat">
+
+        <activity android:name=".app.ui.NavigationDrawerActivityTest$TestActivity"/>
+
+        <activity
+            android:name=".app.ui.SprocketsActivityTest$TestActivity"
+            android:parentActivityName=".app.ui.SprocketsActivityTest$TestActivity"/>
+
+        <activity android:name=".app.ui.SprocketsFragmentTest$TestActivity"/>
+
+        <activity android:name=".app.ui.SprocketsPreferenceFragmentTest$TestActivity"/>
+
+        <activity android:name=".app.ui.UserHeaderNavigationFragmentTest$TestActivity"/>
+
+    </application>
+
+</manifest>

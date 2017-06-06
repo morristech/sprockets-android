@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -19,40 +19,45 @@ package net.sf.sprockets.app.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.os.Bundle;
-import android.util.SparseArray;
-import android.view.ActionMode;
-import android.view.View;
-import android.widget.AbsListView;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v13.app.FragmentCompat.OnRequestPermissionsResultCallback;
 
-import net.sf.sprockets.util.SparseArrays;
-import net.sf.sprockets.view.ActionModePresenter;
-
-import butterknife.ButterKnife;
-import icepick.Icepick;
-import icepick.Icicle;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
- * {@link ButterKnife#bind(Object, View) Binds} content Views, saves the instance state of
- * {@link Icicle} fields and restores them when recreated.
- * <p>
- * If you have an AbsListView that creates an {@link ActionMode} when items are checked, you can
- * provide it in {@link #getAbsListView()} and its ActionMode will be hidden and restored as
- * requested (e.g. in a {@link NavigationDrawerActivity}).
- * </p>
+ * Performs common actions during the Fragment lifecycle, including starting and stopping
+ * {@link Presenter}s and forwarding permission request results to {@link EasyPermissions}.
+ *
+ * @since 4.0.0
  */
-public abstract class SprocketsFragment extends Fragment implements ActionModePresenter {
+public abstract class SprocketsFragment extends Fragment
+        implements OnRequestPermissionsResultCallback {
     /**
      * Shortcut to {@link #getActivity()}.
      */
-    protected Activity a;
+    @Nullable protected Activity a;
 
-    @Icicle
-    int[] mCheckedItemPos;
+    private Presenter mPres;
 
-    @Icicle
-    SparseArray<Bundle> mLoaderArgs;
+    /**
+     * Start and stop the presenter, which directs this view, on Fragment View create and Fragment
+     * destroy.
+     */
+    protected <T extends Presenter> T manage(T presenter) {
+        mPres = presenter;
+        return presenter;
+    }
+
+    /**
+     * Shortcut to {@link #getActivity()}, casting to your assignment type.
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public <T extends Activity> T a() {
+        return (T) a;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -61,151 +66,30 @@ public abstract class SprocketsFragment extends Fragment implements ActionModePr
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        onCreate(this, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        onViewCreated(this, view, savedInstanceState);
-    }
-
-    /**
-     * Shortcut to {@link #getActivity()}, casting to your assignment type.
-     */
-    public <T extends Activity> T a() {
-        return (T) a;
-    }
-
-    /**
-     * Override to provide an AbsListView that creates an {@link ActionMode} when items are checked.
-     * Its ActionMode will be hidden and restored as requested.
-     */
-    public AbsListView getAbsListView() {
-        return null;
-    }
-
-    @Override
-    public boolean hideActionMode() {
-        AbsListView view = getAbsListView();
-        if (view != null && view.getCheckedItemCount() > 0) {
-            Object[] result = hideActionMode(view);
-            mCheckedItemPos = (int[]) result[1];
-            return (Boolean) result[0];
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (mPres != null) {
+            mPres.onStart(savedInstanceState != null);
         }
-        return false;
     }
 
     @Override
-    public boolean restoreActionMode() {
-        AbsListView view = getAbsListView();
-        if (view != null && mCheckedItemPos != null) {
-            boolean checked = restoreActionMode(view, mCheckedItemPos);
-            mCheckedItemPos = null; // don't restore again
-            return checked;
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mPres != null) {
+            mPres.onStop();
         }
-        return false;
-    }
-
-    /**
-     * Save the {@link LoaderCallbacks#onCreateLoader(int, Bundle) Loader arguments}.
-     *
-     * @since 2.3.0
-     */
-    public void saveLoaderArgs(int id, Bundle args) {
-        if (mLoaderArgs == null) {
-            mLoaderArgs = new SparseArray<>();
-        }
-        mLoaderArgs.put(id, args);
-    }
-
-    /**
-     * Get {@link LoaderCallbacks#onCreateLoader(int, Bundle) Loader arguments} that have been
-     * {@link #saveLoaderArgs(int, Bundle) saved}.
-     *
-     * @return null if arguments have not been saved for the Loader
-     * @since 2.3.0
-     */
-    public Bundle getLoaderArgs(int id) {
-        return mLoaderArgs != null ? mLoaderArgs.get(id) : null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        onSaveInstanceState(this, outState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        onDestroyView(this);
+        super.onDestroy();
     }
 
     @Override
     public void onDetach() {
-        super.onDetach();
         a = null;
-    }
-
-    /**
-     * Restore the instance state of {@link Icicle} fields.
-     */
-    static void onCreate(Fragment frag, Bundle savedInstanceState) {
-        Icepick.restoreInstanceState(frag, savedInstanceState);
-    }
-
-    /**
-     * {@link ButterKnife#bind(Object, View) Binds} content Views.
-     */
-    static void onViewCreated(Fragment frag, View view, Bundle savedInstanceState) {
-        ButterKnife.bind(frag, view);
-    }
-
-    /**
-     * Uncheck any checked items.
-     *
-     * @return true if any positions were unchecked, the unchecked item positions
-     */
-    static Object[] hideActionMode(AbsListView view) {
-        int[] checkedItemPos = SparseArrays.trueKeys(view.getCheckedItemPositions());
-        return new Object[]{check(view, checkedItemPos, false), checkedItemPos};
-    }
-
-    /**
-     * Check the items.
-     *
-     * @return true if any positions were checked
-     */
-    static boolean restoreActionMode(AbsListView view, int[] checkedItemPos) {
-        return check(view, checkedItemPos, true);
-    }
-
-    /**
-     * Check or uncheck the positions.
-     *
-     * @return true if any positions were checked or unchecked
-     */
-    private static boolean check(AbsListView view, int[] checkedItemPos, boolean check) {
-        for (int pos : checkedItemPos) {
-            view.setItemChecked(pos, check);
-        }
-        return checkedItemPos.length > 0;
-    }
-
-    /**
-     * Save the instance state of {@link Icicle} fields.
-     */
-    static void onSaveInstanceState(Fragment frag, Bundle outState) {
-        Icepick.saveInstanceState(frag, outState);
-    }
-
-    /**
-     * {@link ButterKnife#unbind(Object) Unbinds} content Views.
-     */
-    static void onDestroyView(Fragment frag) {
-        ButterKnife.unbind(frag);
+        super.onDetach();
     }
 }

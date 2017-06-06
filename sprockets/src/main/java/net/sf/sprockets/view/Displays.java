@@ -1,16 +1,16 @@
 /*
- * Copyright 2013-2014 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2013-2016 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,8 +42,8 @@ public class Displays {
     /**
      * Get the {@link Display#getSize(Point) size} of the display.
      */
-    public static Point getSize(Activity activity) {
-        return getSize(activity.getWindowManager());
+    public static Point getSize(Activity a) {
+        return getSize(a.getWindowManager());
     }
 
     private static Point getSize(WindowManager manager) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -18,17 +18,21 @@
 package net.sf.sprockets.widget;
 
 import android.content.Context;
-import android.database.Observable;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * <p>
- * Notifies observers when it has changed. Usage in XML is identical to {@link ImageView}, just with
- * a different name:
+ * Notifies observers when its Drawable has changed. Usage in XML is identical to {@link ImageView},
+ * just with a different name:
  * </p>
  * <pre>{@code
  * <net.sf.sprockets.widget.ObservableImageView
@@ -38,102 +42,73 @@ import android.widget.ImageView;
  * @since 2.1.0
  */
 public class ObservableImageView extends ImageView {
-    private final ImageViewObservable mObservable = new ImageViewObservable();
+    private final Observable mObservable = new Observable();
 
     public ObservableImageView(Context context) {
         super(context);
     }
 
     public ObservableImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public ObservableImageView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+        this(context, attrs, defStyleAttr, 0);
     }
 
-    // todo Added in API level 21
-    // public ObservableImageView(Context context, AttributeSet attrs, int defStyleAttr,
-    //                            int defStyleRes) {
-    //     super(context, attrs, defStyleAttr, defStyleRes);
-    // }
+    public ObservableImageView(Context context, AttributeSet attrs, int defStyleAttr,
+                               int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
 
     @Override
-    public void setImageResource(int resId) {
+    public void setImageResource(@DrawableRes int resId) {
         super.setImageResource(resId);
-        onDrawableChanged();
+        notifyObservers();
     }
 
     @Override
-    public void setImageURI(Uri uri) {
+    public void setImageURI(@Nullable Uri uri) {
         super.setImageURI(uri);
-        onDrawableChanged();
+        notifyObservers();
     }
 
     @Override
-    public void setImageDrawable(Drawable drawable) {
+    public void setImageDrawable(@Nullable Drawable drawable) {
         super.setImageDrawable(drawable);
-        onDrawableChanged();
+        notifyObservers();
     }
 
     @Override
     public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        // as of API 21, super calls setImageDrawable, which will call onDrawableChanged
+        super.setImageBitmap(bm); // calls setImageDrawable, which will call notifyObservers
     }
 
-    /**
-     * Notify observers that the Drawable source has changed.
-     */
-    private void onDrawableChanged() {
+    @SuppressWarnings("ConstantConditions")
+    private void notifyObservers() {
         if (mObservable != null) { // is during super(), which can be setting an image from XML
-            mObservable.onDrawableChanged();
+            mObservable.notifyObservers(getDrawable());
         }
     }
 
     /**
-     * Add an observer to the list.
-     *
-     * @param observer which is not already registered
+     * Notify the observer when the Drawable has changed.
      */
-    public void registerObserver(ImageViewObserver observer) {
-        mObservable.registerObserver(observer);
+    public void addObserver(Observer observer) {
+        mObservable.addObserver(observer);
     }
 
     /**
-     * Remove an observer from the list.
-     *
-     * @param observer which was already registered
+     * Stop notifying the observer when the Drawable has changed.
      */
-    public void unregisterObserver(ImageViewObserver observer) {
-        mObservable.unregisterObserver(observer);
+    public void deleteObserver(Observer observer) {
+        mObservable.deleteObserver(observer);
     }
 
     /**
-     * Remove all observers from the list.
+     * Stop notifying all observers when the Drawable has changed.
      */
-    public void unregisterAll() {
-        mObservable.unregisterAll();
-    }
-
-    /**
-     * Notified when an ImageView has changed.
-     */
-    public interface ImageViewObserver {
-        /**
-         * The image source has changed.
-         */
-        void onDrawableChanged();
-    }
-
-    /**
-     * Notifies observers when an ImageView has changed.
-     */
-    private class ImageViewObservable extends Observable<ImageViewObserver> {
-        private void onDrawableChanged() {
-            for (int i = 0, size = mObservers.size(); i < size; i++) {
-                mObservers.get(i).onDrawableChanged();
-            }
-        }
+    public void deleteObservers() {
+        mObservable.deleteObservers();
     }
 }

@@ -1,24 +1,27 @@
 /*
- * Copyright 2014-2015 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.sf.sprockets.text.style;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Parcel;
+import android.support.annotation.ColorInt;
+import android.support.annotation.IntRange;
 import android.text.TextPaint;
 import android.text.style.ForegroundColorSpan;
 
@@ -27,22 +30,23 @@ import android.text.style.ForegroundColorSpan;
  * that after updating these values, you will likely need to re-set the Spannable as the text for
  * the View in order to see the changes reflected.
  * <p>
- * Inspired by Flavien Laurent's
- * <a href="http://flavienlaurent.com/blog/2014/01/31/spans/"
+ * Inspired by Flavien Laurent's <a href="http://flavienlaurent.com/blog/2014/01/31/spans/"
  * target="_blank">Spans, a Powerful Concept.</a>
  * </p>
  */
+@SuppressLint("ParcelCreator")
 public class MutableForegroundColorSpan extends ForegroundColorSpan {
     private int mAlpha;
     private int mColor;
 
     /**
-     * Start with this alpha and color.
+     * Start with the alpha and color.
      *
      * @param alpha 0 (transparent) to 255 (opaque)
      * @param color e.g. 0x00FF00 for green
      */
-    public MutableForegroundColorSpan(int alpha, int color) {
+    public MutableForegroundColorSpan(@IntRange(from = 0, to = 255) int alpha,
+                                      @ColorInt int color) {
         super(color);
         mAlpha = alpha;
         mColor = color;
@@ -54,10 +58,7 @@ public class MutableForegroundColorSpan extends ForegroundColorSpan {
         mColor = src.readInt();
     }
 
-    /**
-     * @param alpha 0 (transparent) to 255 (opaque)
-     */
-    public MutableForegroundColorSpan setAlpha(int alpha) {
+    public MutableForegroundColorSpan setAlpha(@IntRange(from = 0, to = 255) int alpha) {
         mAlpha = alpha;
         return this;
     }
@@ -66,10 +67,7 @@ public class MutableForegroundColorSpan extends ForegroundColorSpan {
         return mAlpha;
     }
 
-    /**
-     * @param color e.g. 0x00FF00 for green
-     */
-    public MutableForegroundColorSpan setForegroundColor(int color) {
+    public MutableForegroundColorSpan setForegroundColor(@ColorInt int color) {
         mColor = color;
         return this;
     }

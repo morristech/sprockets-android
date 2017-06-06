@@ -67,8 +67,9 @@ public abstract class CursorWrapperLoader<D extends Cursor> extends AsyncTaskLoa
             mCancellationSignal = new CancellationSignal();
         }
         try {
-            Cursor cursor = getContext().getContentResolver().query(mUri, mProjection,
-                    mSelection, mSelectionArgs, mSortOrder, mCancellationSignal);
+            Cursor cursor = getContext().getContentResolver()
+                    .query(mUri, mProjection, mSelection, mSelectionArgs, mSortOrder,
+                            mCancellationSignal);
             if (cursor != null) {
                 try {
                     // Ensure the cursor window is filled.
@@ -157,8 +158,9 @@ public abstract class CursorWrapperLoader<D extends Cursor> extends AsyncTaskLoa
      * Starts an asynchronous load of the contacts list data. When the result is ready the callbacks
      * will be called on the UI thread. If a previous load has been completed and is still valid
      * the result may be passed to the callbacks immediately.
-     * <p/>
+     * <p>
      * Must be called from the UI thread
+     * </p>
      */
     @Override
     protected void onStartLoading() {

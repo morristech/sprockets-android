@@ -1,8 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.sf.sprockets">
 
-    <application>
+    <application android:supportsRtl="true">
+
         <service android:name=".app.ContentService"/>
+
+        <provider
+            android:name=".app.InitProvider"
+            android:authorities="${applicationId}.sprocketsinitprovider"
+            android:exported="false"
+            android:initOrder="2147483647"/>
+
     </application>
 
 </manifest>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 pushbit <pushbit@gmail.com>
+ * Copyright 2015-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -18,82 +18,77 @@
 package net.sf.sprockets.gms.maps;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds.Builder;
 
 import net.sf.sprockets.R;
-import net.sf.sprockets.gms.location.Locations;
+import net.sf.sprockets.gms.location.LocationProvider;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Utility methods for working with GoogleMaps.
  *
- * @since 2.1.0
+ * @since 4.0.0
  */
+@Singleton
 public class GoogleMaps {
-    private GoogleMaps() {
+    private final Context mContext;
+    private final LocationProvider mProvider;
+
+    @Inject
+    public GoogleMaps(Context context, LocationProvider provider) {
+        mContext = context;
+        mProvider = provider;
     }
 
     /**
-     * Move to the user's most recent location and zoom to the default level.
+     * Move to the most recently reported location and zoom to the default level.
      */
-    public static void moveCameraToMyLocation(Context context, GoogleMap map) {
-        moveCameraToMyLocation(context, map, 15.0f);
+    public void moveCameraToLastLocation(GoogleMap map) {
+        moveCameraToLastLocation(map, 15.0f);
     }
 
     /**
-     * Move and zoom to the user's most recent location.
+     * Move and zoom to the most recently reported location.
      *
      * @see CameraUpdateFactory#newLatLngZoom(LatLng, float)
      */
-    public static void moveCameraToMyLocation(Context context, final GoogleMap map,
-                                              final float zoom) {
-        Locations.requestLast(context, new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-            }
-        });
+    public void moveCameraToLastLocation(GoogleMap map, float zoom) {
+        mProvider.getLastLocation().subscribe(location -> map.moveCamera(CameraUpdateFactory
+                .newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom)));
     }
 
     /**
      * If the position is not visible on the map, animate the camera to include it.
      */
-    public static void animateCameraToIncludePosition(Context context, GoogleMap map,
-                                                      LatLng position) {
-        animateCameraToIncludePosition(context, map, position, 0L);
+    public void animateCameraToIncludePosition(GoogleMap map, LatLng position) {
+        animateCameraToIncludePosition(map, position, 0L);
     }
 
     /**
-     * If the position is not visible on the map, animate the camera after the delay to include it.
+     * If the position is not visible on the map, animate the camera to include it, after the delay.
      */
-    public static void animateCameraToIncludePosition(final Context context, final GoogleMap map,
-                                                      final LatLng position, long delay) {
+    public void animateCameraToIncludePosition(GoogleMap map, LatLng position, long delay) {
         if (!map.getProjection().getVisibleRegion().latLngBounds.contains(position)) {
             if (delay > 0) {
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        doAnimateCameraToIncludePosition(context, map, position);
-                    }
-                }, delay);
+                new Handler(Looper.getMainLooper())
+                        .postDelayed(() -> doAnimateCameraToIncludePosition(map, position), delay);
             } else {
-                doAnimateCameraToIncludePosition(context, map, position);
+                doAnimateCameraToIncludePosition(map, position);
             }
         }
     }
 
-    private static void doAnimateCameraToIncludePosition(Context context, GoogleMap map,
-                                                         LatLng position) {
+    private void doAnimateCameraToIncludePosition(GoogleMap map, LatLng position) {
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(
                 new Builder().include(map.getCameraPosition().target).include(position).build(),
-                context.getResources().getDimensionPixelOffset(R.dimen.min_touch_size)));
+                mContext.getResources().getDimensionPixelOffset(R.dimen.touch_target_min_size)));
     }
 }

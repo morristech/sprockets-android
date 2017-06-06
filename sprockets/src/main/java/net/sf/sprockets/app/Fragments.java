@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -17,11 +17,14 @@
 
 package net.sf.sprockets.app;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 
 import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
 import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
@@ -44,7 +47,11 @@ public class Fragments {
         if (args == null) {
             if (!frag.isAdded()) {
                 args = new Bundle();
-                frag.setArguments(args);
+                try {
+                    frag.setArguments(args);
+                } catch (IllegalStateException e) { // "attached" but not yet "added"
+                    args = EMPTY;
+                }
             } else {
                 args = EMPTY;
             }
@@ -58,8 +65,9 @@ public class Fragments {
      *
      * @return null if the FragmentManager is not available
      */
-    public static FragmentTransaction open(Activity activity) {
-        return open(activity.getFragmentManager());
+    @Nullable
+    public static FragmentTransaction open(Activity a) {
+        return open(a.getFragmentManager());
     }
 
     /**
@@ -68,6 +76,7 @@ public class Fragments {
      *
      * @return null if the FragmentManager is not available
      */
+    @Nullable
     public static FragmentTransaction open(Fragment frag) {
         return open(frag.getFragmentManager());
     }
@@ -78,6 +87,7 @@ public class Fragments {
      *
      * @return null if the FragmentManager is null
      */
+    @Nullable
     public static FragmentTransaction open(FragmentManager fm) {
         return transit(fm, TRANSIT_FRAGMENT_OPEN);
     }
@@ -88,8 +98,9 @@ public class Fragments {
      *
      * @return null if the FragmentManager is not available
      */
-    public static FragmentTransaction close(Activity activity) {
-        return close(activity.getFragmentManager());
+    @Nullable
+    public static FragmentTransaction close(Activity a) {
+        return close(a.getFragmentManager());
     }
 
     /**
@@ -98,6 +109,7 @@ public class Fragments {
      *
      * @return null if the FragmentManager is not available
      */
+    @Nullable
     public static FragmentTransaction close(Fragment frag) {
         return close(frag.getFragmentManager());
     }
@@ -108,6 +120,7 @@ public class Fragments {
      *
      * @return null if the FragmentManager is null
      */
+    @Nullable
     public static FragmentTransaction close(FragmentManager fm) {
         return transit(fm, TRANSIT_FRAGMENT_CLOSE);
     }
@@ -117,7 +130,42 @@ public class Fragments {
      *
      * @return null if the FragmentManager is null
      */
+    @SuppressLint("CommitTransaction")
     private static FragmentTransaction transit(FragmentManager fm, int transit) {
         return fm != null ? fm.beginTransaction().setTransition(transit) : null;
+    }
+
+    /**
+     * Get the Fragment with the ID.
+     *
+     * @return null if the Fragment isn't found
+     * @since 4.0.0
+     */
+    @Nullable
+    public static <T extends Fragment> T findById(Activity a, @IdRes int id) {
+        return findById(a.getFragmentManager(), id);
+    }
+
+    /**
+     * Get the Fragment with the ID.
+     *
+     * @return null if the Fragment isn't found
+     * @since 4.0.0
+     */
+    @Nullable
+    public static <T extends Fragment> T findById(Fragment frag, @IdRes int id) {
+        return findById(frag.getFragmentManager(), id);
+    }
+
+    /**
+     * Get the Fragment with the ID.
+     *
+     * @return null if the Fragment isn't found
+     * @since 4.0.0
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static <T extends Fragment> T findById(FragmentManager fm, @IdRes int id) {
+        return (T) fm.findFragmentById(id);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 pushbit <pushbit@gmail.com>
+ * Copyright 2015-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -18,13 +18,9 @@
 package net.sf.sprockets.app.backup;
 
 import android.app.backup.BackupAgentHelper;
-import android.app.backup.BackupDataInput;
 import android.app.backup.SharedPreferencesBackupHelper;
-import android.os.ParcelFileDescriptor;
 
-import net.sf.sprockets.preference.Prefs;
-
-import java.io.IOException;
+import net.sf.sprockets.content.EasySharedPreferences;
 
 /**
  * <p>
@@ -39,18 +35,12 @@ import java.io.IOException;
  *
  * @since 2.4.0
  */
+/* deprecate/remove when min API >= 23 */
 public class DefaultSharedPreferencesBackupAgent extends BackupAgentHelper {
     @Override
     public void onCreate() {
         super.onCreate();
-        String name = Prefs.getDefaultName(this);
+        String name = EasySharedPreferences.getDefaultName(this);
         addHelper(name, new SharedPreferencesBackupHelper(this, name));
-    }
-
-    @Override
-    public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState)
-            throws IOException {
-        super.onRestore(data, appVersionCode, newState);
-        Prefs.reload(this);
     }
 }

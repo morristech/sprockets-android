@@ -1,23 +1,25 @@
 /*
- * Copyright 2014-2015 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.sf.sprockets.text.style;
 
+import android.annotation.SuppressLint;
 import android.os.Parcel;
+import android.support.annotation.IntRange;
 import android.text.TextPaint;
 import android.text.style.ForegroundColorSpan;
 
@@ -27,20 +29,18 @@ import android.text.style.ForegroundColorSpan;
  * updating this value, you will likely need to re-set the Spannable as the text for the View in
  * order to see the change reflected.
  * <p>
- * Inspired by Flavien Laurent's
- * <a href="http://flavienlaurent.com/blog/2014/01/31/spans/"
+ * Inspired by Flavien Laurent's <a href="http://flavienlaurent.com/blog/2014/01/31/spans/"
  * target="_blank">Spans, a Powerful Concept.</a>
  * </p>
  */
+@SuppressLint("ParcelCreator")
 public class MutableForegroundAlphaSpan extends ForegroundColorSpan {
     private int mAlpha;
 
     /**
-     * Start with this alpha.
-     *
-     * @param alpha 0 (transparent) to 255 (opaque)
+     * Start with the alpha.
      */
-    public MutableForegroundAlphaSpan(int alpha) {
+    public MutableForegroundAlphaSpan(@IntRange(from = 0, to = 255) int alpha) {
         super(0);
         mAlpha = alpha;
     }
@@ -50,10 +50,7 @@ public class MutableForegroundAlphaSpan extends ForegroundColorSpan {
         mAlpha = src.readInt();
     }
 
-    /**
-     * @param alpha 0 (transparent) to 255 (opaque)
-     */
-    public MutableForegroundAlphaSpan setAlpha(int alpha) {
+    public MutableForegroundAlphaSpan setAlpha(@IntRange(from = 0, to = 255) int alpha) {
         mAlpha = alpha;
         return this;
     }

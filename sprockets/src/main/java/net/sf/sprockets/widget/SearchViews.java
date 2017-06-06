@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2015 pushbit <pushbit@gmail.com>
  * 
  * This file is part of Sprockets.
  * 
@@ -17,6 +17,7 @@
 
 package net.sf.sprockets.widget;
 
+import android.support.annotation.DrawableRes;
 import android.view.View;
 import android.widget.SearchView;
 
@@ -30,12 +31,12 @@ public class SearchViews {
     /**
      * Override the default background with a theme version.
      */
-    public static SearchView setBackground(SearchView view, int drawableResId) {
+    public static SearchView setBackground(SearchView view, @DrawableRes int drawableId) {
         int id = view.getResources().getIdentifier("android:id/search_plate", null, null);
         if (id > 0) {
             View search = view.findViewById(id);
             if (search != null) {
-                search.setBackgroundResource(drawableResId);
+                search.setBackgroundResource(drawableId);
             }
         }
         return view;

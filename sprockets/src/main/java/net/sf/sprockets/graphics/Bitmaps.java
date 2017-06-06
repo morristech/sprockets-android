@@ -19,6 +19,7 @@ package net.sf.sprockets.graphics;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.support.annotation.Nullable;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
@@ -30,15 +31,15 @@ public class Bitmaps {
     }
 
     /**
-     * Get the number of bytes that would be used to store a bitmap with this size, in pixels, and
-     * the {@link Config#ARGB_8888 ARGB_8888} (recommended) storage config.
+     * Get the number of bytes that would be used to store a bitmap with the size, in pixels, and
+     * {@link Config#ARGB_8888 ARGB_8888} (recommended) storage config.
      */
     public static int getByteCount(int width, int height) {
         return getByteCount(width, height, ARGB_8888);
     }
 
     /**
-     * Get the number of bytes that would be used to store a bitmap with this size, in pixels, and
+     * Get the number of bytes that would be used to store a bitmap with the size, in pixels, and
      * storage config.
      */
     public static int getByteCount(int width, int height, Config config) {
@@ -66,6 +67,7 @@ public class Bitmaps {
      *
      * @return null if a copy could not be made
      */
+    @Nullable
     public static Bitmap mutable(Bitmap source) {
         if (source.isMutable()) {
             return source;

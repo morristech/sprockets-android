@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 pushbit <pushbit@gmail.com>
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -21,8 +21,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.google.common.base.Throwables;
-
 import net.sf.sprockets.content.Content.Query;
 import net.sf.sprockets.database.EasyCursor;
 
@@ -32,7 +30,6 @@ import java.util.concurrent.Callable;
  * Wraps the loaded cursor in an {@link EasyCursor}.
  */
 public class EasyCursorLoader extends CursorWrapperLoader<EasyCursor> {
-    private static final String TAG = EasyCursorLoader.class.getSimpleName();
     private Callable<?> mCall;
 
     public EasyCursorLoader(Context context) {
@@ -66,7 +63,7 @@ public class EasyCursorLoader extends CursorWrapperLoader<EasyCursor> {
             try {
                 c.setTag(mCall.call());
             } catch (Exception e) {
-                Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
         }
         return c;

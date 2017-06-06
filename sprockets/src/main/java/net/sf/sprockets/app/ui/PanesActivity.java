@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -17,9 +17,14 @@
 
 package net.sf.sprockets.app.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.support.annotation.IdRes;
+import android.support.annotation.IntRange;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -29,8 +34,6 @@ import net.sf.sprockets.R;
 import net.sf.sprockets.app.Fragments;
 import net.sf.sprockets.util.Elements;
 
-import static butterknife.ButterKnife.findById;
-
 /**
  * Manages two fragment panes that are either displayed next to each other or in a
  * {@link ViewPager}, depending on screen size. The fragment instance states are saved and restored
@@ -39,10 +42,6 @@ import static butterknife.ButterKnife.findById;
  * You must either provide your own layout that includes a version with the ViewPager and another
  * with two panes, by calling {@link #setContentView(int, int, int, int)}, or you may call
  * {@link #setDefaultContentView()} to use the library's default layout for the panes.
- * </p>
- * <p>
- * <a href="https://github.com/pushbit/sprockets-android/blob/master/samples/src/main/java/net/sf/sprockets/sample/app/ui/PanesSampleActivity.java"
- * target="_blank">Sample Implementation</a>
  * </p>
  */
 public abstract class PanesActivity extends SprocketsActivity {
@@ -59,24 +58,26 @@ public abstract class PanesActivity extends SprocketsActivity {
     private static final String[] sPanes = {PANE_1, PANE_2};
 
     /**
-     * Use the default layout for the panes, {@code R.layout.panes}.
+     * Use the default layout for the panes.
      */
     public void setDefaultContentView() {
-        setContentView(R.layout.panes, R.id.panes, R.id.pane1, R.id.pane2);
+        setContentView(R.layout.sprockets_panes, R.id.panes, R.id.pane1, R.id.pane2);
     }
 
     /**
      * Use your own layout for the panes.
      *
-     * @param pagerId {@code R.id} value for the ViewPager in the single pane layout
-     * @param pane1Id {@code R.id} value for the first pane in the multi-pane layout
-     * @param pane2Id {@code R.id} value for the second pane in the multi-pane layout
+     * @param pagerId ViewPager in the single pane layout
+     * @param pane1Id first pane in the multi-pane layout
+     * @param pane2Id second pane in the multi-pane layout
      */
-    public void setContentView(int layoutResId, int pagerId, int pane1Id, int pane2Id) {
-        setContentView(layoutResId);
+    @SuppressWarnings("ConstantConditions")
+    public void setContentView(@LayoutRes int layoutId, @IdRes int pagerId, @IdRes int pane1Id,
+                               @IdRes int pane2Id) {
+        setContentView(layoutId);
         Fragment pane1 = findFragmentByPane(1);
         Fragment pane2 = findFragmentByPane(2);
-        ViewPager pager = findById(this, pagerId);
+        ViewPager pager = (ViewPager) findViewById(pagerId);
         /* do we need to move the fragments between the single and multi-pane layouts? */
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = null;
@@ -119,25 +120,21 @@ public abstract class PanesActivity extends SprocketsActivity {
 
     /**
      * Get the fragment to be displayed in the pane.
-     *
-     * @param pane must be 1 or 2
      */
-    public abstract Fragment getFragment(int pane);
+    public abstract Fragment getFragment(@IntRange(from = 1, to = 2) int pane);
 
     /**
      * Get the fragment that is displayed in the pane.
      *
-     * @param pane must be 1 or 2
      * @return null if a fragment hasn't been added to the pane yet
      */
-    public <T extends Fragment> T findFragmentByPane(int pane) {
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public <T extends Fragment> T findFragmentByPane(@IntRange(from = 1, to = 2) int pane) {
         String tag = Elements.get(sPanes, pane - 1);
         return tag != null ? (T) getFragmentManager().findFragmentByTag(tag) : null;
     }
 
-    /**
-     * Adds fragments to the pager.
-     */
     private class PanesAdapter extends PagerAdapter {
         private final Fragment mPane1;
         private final Fragment mPane2;
@@ -155,13 +152,15 @@ public abstract class PanesActivity extends SprocketsActivity {
         }
 
         @Override
+        @SuppressLint("CommitTransaction")
         public Object instantiateItem(ViewGroup container, int position) {
+            int containerId = container.getId();
             Fragment item = position == 0 ? mPane1 : mPane2;
-            if (item.getId() != container.getId()) {
+            if (item.getId() != containerId) {
                 if (mFt == null) {
                     mFt = getFragmentManager().beginTransaction();
                 }
-                mFt.add(container.getId(), item, sPanes[position]);
+                mFt.add(containerId, item, sPanes[position]);
             }
             if (item != mPrimary) {
                 item.setMenuVisibility(false);

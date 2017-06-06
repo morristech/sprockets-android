@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 pushbit <pushbit@gmail.com>
+ * Copyright 2013-2017 pushbit <pushbit@gmail.com>
  *
  * This file is part of Sprockets.
  *
@@ -18,6 +18,7 @@
 package net.sf.sprockets.net;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
@@ -27,6 +28,9 @@ import android.text.TextUtils;
 import com.google.common.base.Joiner;
 
 import net.sf.sprockets.content.Content;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -46,9 +50,11 @@ public class Uris {
 
     /**
      * Append the cursor's {@link BaseColumns#_ID _ID} value to the URI.
+     *
+     * @throws IllegalArgumentException if the cursor does not have an _id column
      */
     public static Uri appendId(Uri uri, Cursor cursor) {
-        return ContentUris.withAppendedId(uri, cursor.getLong(cursor.getColumnIndex(_ID)));
+        return ContentUris.withAppendedId(uri, cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
     }
 
     /**
@@ -142,24 +148,25 @@ public class Uris {
      * Get a {@code mailto} Uri with the headers. Any null or empty parameters are skipped. The
      * subject and body will be encoded.
      */
-    public static Uri mailto(List<String> to, List<String> cc, List<String> bcc,
-                             String subject, String body) {
+    public static Uri mailto(List<String> to, List<String> cc, List<String> bcc, String subject,
+                             String body) {
         String encSubject = Uri.encode(subject);
         String encBody = Uri.encode(body);
-        StringBuilder ssp = new StringBuilder((to != null ? to.size() * 34 : 0)
-                + (cc != null ? cc.size() * 34 : 0) + (bcc != null ? bcc.size() * 34 : 0)
-                + (encSubject != null ? encSubject.length() : 0)
-                + (encBody != null ? encBody.length() : 0));
+        StringBuilder ssp = new StringBuilder(
+                CollectionUtils.size(to) * 34 + CollectionUtils.size(cc) * 34 +
+                        CollectionUtils.size(bcc) * 34 + StringUtils.length(encSubject) +
+                        StringUtils.length(encBody));
         Joiner joiner = Joiner.on(',');
-        if (to != null && !to.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(to)) {
             joiner.appendTo(ssp, to);
         }
         boolean start = true;
-        if (cc != null && !cc.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(cc)) {
+            //noinspection ConstantConditions
             joiner.appendTo(ssp.append(separator(start)).append("cc="), cc);
             start = false;
         }
-        if (bcc != null && !bcc.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(bcc)) {
             joiner.appendTo(ssp.append(separator(start)).append("bcc="), bcc);
             start = false;
         }
@@ -169,6 +176,7 @@ public class Uris {
         }
         if (!TextUtils.isEmpty(encBody)) {
             ssp.append(separator(start)).append("body=").append(encBody);
+            //noinspection UnusedAssignment
             start = false;
         }
         return new Builder().scheme("mailto").encodedOpaquePart(ssp.toString()).build();
@@ -179,5 +187,14 @@ public class Uris {
      */
     private static char separator(boolean start) {
         return start ? '?' : '&';
+    }
+
+    /**
+     * Get a URI for the app's details page.
+     *
+     * @since 4.0.0
+     */
+    public static Uri appDetails(Context context) {
+        return Uri.parse("market://details?id=" + context.getPackageName());
     }
 }

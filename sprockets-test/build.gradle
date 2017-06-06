@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName '0.0.0'
+    }
+    dataBinding {
+        enabled true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    compile 'com.android.support.test:rules:0.5'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    compile 'junit:junit:4.12'
+    compile 'net.sf.sprockets:sprockets-android:4.0.0'
+    compile 'org.mockito:mockito-android:2.8.9'
+}

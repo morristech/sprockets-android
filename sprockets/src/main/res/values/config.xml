@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sprockets_appbar_floating_action_button_behavior">
+        net.sf.sprockets.widget.AppBarFloatingActionButtonBehavior
+    </string>
+</resources>

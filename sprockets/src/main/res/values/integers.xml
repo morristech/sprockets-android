@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="anim_duration_normal">300</integer>
+    <integer name="anim_duration_large">375</integer>
+    <integer name="anim_duration_enter">225</integer>
+    <integer name="anim_duration_exit">195</integer>
+</resources>

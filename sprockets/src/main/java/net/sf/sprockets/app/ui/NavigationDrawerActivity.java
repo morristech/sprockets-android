@@ -1,146 +1,98 @@
 /*
- * Copyright 2014-2015 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2014-2017 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.sf.sprockets.app.ui;
 
-import android.content.res.Configuration;
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.DrawerLayout.DrawerListener;
-import android.view.ActionMode;
+import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.google.common.base.Supplier;
+import net.sf.sprockets.R;
 
-import net.sf.sprockets.app.NavigationDrawerToggle;
-import net.sf.sprockets.view.ActionModePresenter;
-
-import java.util.Collections;
-import java.util.List;
-
-import static android.view.Gravity.START;
+import static android.graphics.Color.TRANSPARENT;
+import static android.support.v4.view.GravityCompat.START;
 
 /**
- * Manages the ActionBar during navigation drawer events according to the
- * <a href="http://developer.android.com/design/patterns/navigation-drawer.html"
- * target="_blank">Android design guidelines</a>. See {@link NavigationDrawerToggle} for details
- * on how the ActionBar is affected and your responsibilities in {@code onCreateOptionsMenu}
- * methods.
- * <p>
- * If your Activity includes components that may start an {@link ActionMode}, they should implement
- * {@link ActionModePresenter} and be provided in {@link #getActionModePresenters()}.
- * </p>
+ * Connects a DrawerLayout to the ActionBar so that the navigation button opens and closes the
+ * drawer. Also closes the drawer when the back button is pressed.
  */
-public abstract class NavigationDrawerActivity extends SprocketsActivity implements DrawerListener {
-    private DrawerLayout mLayout;
-    private NavigationDrawerToggle mToggle;
+public abstract class NavigationDrawerActivity extends SprocketsActivity {
+    private DrawerLayout mDrawer;
 
     /**
-     * Listen for drawer events on the DrawerLayout.
+     * Connect the DrawerLayout to the ActionBar. Should be called in
+     * {@link #onCreate(Bundle) onCreate}. Must be called before
+     * {@link Activity#onPostCreate(Bundle) onPostCreate} executes.
      */
-    public NavigationDrawerActivity setDrawerLayout(DrawerLayout layout) {
-        mLayout = layout;
-        mToggle = new NavigationDrawerToggle(this, layout)
-                .setActionModePresentersSupplier(new Presenters()).setDrawerListener(this);
+    public NavigationDrawerActivity setDrawerLayout(DrawerLayout drawer) {
+        mDrawer = drawer;
+        if (mDrawer.getFitsSystemWindows()) { // let it draw the status bar
+            getWindow().setStatusBarColor(TRANSPARENT);
+        }
         return this;
     }
 
     /**
-     * Get the previously set DrawerLayout.
-     *
-     * @return null if a DrawerLayout has not been set
+     * Previously set DrawerLayout.
      */
+    @Nullable
     public DrawerLayout getDrawerLayout() {
-        return mLayout;
+        return mDrawer;
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (mToggle != null) {
-            mToggle.syncState();
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (mToggle != null) {
-            mToggle.onConfigurationChanged(newConfig);
+        if (mDrawer != null) {
+            ActionBar ab = getSupportActionBar();
+            if (ab != null) {
+                ab.setDisplayHomeAsUpEnabled(true);
+                ab.setHomeAsUpIndicator(R.drawable.sprockets_ic_menu);
+                ab.setHomeActionContentDescription(R.string.content_navigation_menu);
+            }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mToggle != null && mToggle.onOptionsItemSelected(item)
-                || super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Override to provide any components that should be asked to hide their ActionMode when the
-     * navigation drawer is opened.
-     */
-    public List<ActionModePresenter> getActionModePresenters() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * After the next navigation drawer close, wait before restoring the ActionBar state.
-     */
-    public NavigationDrawerActivity setOneTimeDrawerActionDelay(long millis) {
-        if (mToggle != null) {
-            mToggle.setOneTimeDrawerActionDelay(millis);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mDrawer != null) {
+                    if (mDrawer.isDrawerVisible(START)) {
+                        mDrawer.closeDrawer(START);
+                    } else {
+                        mDrawer.openDrawer(START);
+                    }
+                    return true;
+                }
+                break;
         }
-        return this;
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-    }
-
-    @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {
-    }
-
-    @Override
-    public void onDrawerOpened(View drawerView) {
-    }
-
-    @Override
-    public void onDrawerClosed(View drawerView) {
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        if (mLayout != null && mLayout.isDrawerOpen(START)) {
-            mLayout.closeDrawer(START);
+        if (mDrawer != null && mDrawer.isDrawerVisible(START)) {
+            mDrawer.closeDrawer(START);
         } else {
             super.onBackPressed();
-        }
-    }
-
-    /**
-     * Supplies any ActionModePresenters from a subclass.
-     */
-    private class Presenters implements Supplier<List<ActionModePresenter>> {
-        @Override
-        public List<ActionModePresenter> get() {
-            return getActionModePresenters();
         }
     }
 }

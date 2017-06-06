@@ -1,3 +1,16 @@
+2017-06-05  4.0.0
+
+	* added app.SprocketsComponent to inject system services and Firebase interfaces
+	* removed obsolete classes, interfaces, and methods
+	* redesigned classes with external dependencies to be injectable
+	* app.ui.Sprockets{Activity,Fragment} no longer bind Views or save instance state
+	* renamed content.DbContentProvider to SQLiteContentProvider
+	* moved preference.Prefs to content.EasyPreferences and redesigned
+	* renamed text.TextWatcherAdapter to SimpleTextWatcher
+	* replaced text.style.Spans.{BOLD,ITALIC,BOLD_ITALIC} with similarly named methods
+	* replaced view.animation.Interpolators constants with methods
+	* prefixed XML attributes with 'sprockets_' to avoid collisions with other libraries
+
 2015-11-14  3.0.0
 
 	Backwards incompatible changes:

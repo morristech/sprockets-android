@@ -1,16 +1,16 @@
 /*
- * Copyright 2013-2015 pushbit <pushbit@gmail.com>
- * 
+ * Copyright 2013-2017 pushbit <pushbit@gmail.com>
+ *
  * This file is part of Sprockets.
- * 
+ *
  * Sprockets is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Sprockets is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with Sprockets. If
  * not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,10 +18,11 @@
 package net.sf.sprockets.database;
 
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 
-import static org.apache.commons.lang.ArrayUtils.EMPTY_INT_ARRAY;
-import static org.apache.commons.lang.ArrayUtils.EMPTY_LONG_ARRAY;
-import static org.apache.commons.lang.ArrayUtils.EMPTY_STRING_ARRAY;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_INT_ARRAY;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_LONG_ARRAY;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_STRING_ARRAY;
 
 /**
  * Utility methods for working with Cursors.
@@ -37,6 +38,15 @@ public class Cursors {
      */
     public static boolean isActive(Cursor cursor) {
         return !cursor.isClosed() && !cursor.isBeforeFirst() && !cursor.isAfterLast();
+    }
+
+    /**
+     * True if the cursor has a row at the position.
+     *
+     * @since 4.0.0
+     */
+    public static boolean hasPosition(Cursor cursor, int position) {
+        return !cursor.isClosed() && position >= 0 && position < cursor.getCount();
     }
 
     /**
@@ -106,6 +116,7 @@ public class Cursors {
      *
      * @return null if the cursor is empty
      */
+    @Nullable
     public static String firstString(Cursor cursor) {
         return firstString(cursor, true);
     }
@@ -116,6 +127,7 @@ public class Cursors {
      * @param close true to close the cursor or false to leave it open
      * @return null if the cursor is empty
      */
+    @Nullable
     public static String firstString(Cursor cursor, boolean close) {
         String s = cursor.moveToFirst() ? cursor.getString(0) : null;
         close(cursor, close);
